@@ -1,0 +1,9 @@
+click>=8.0.0
+fastapi[standard]
+gitingest
+google-generativeai
+python-dotenv
+slowapi
+starlette
+tiktoken
+uvicorn

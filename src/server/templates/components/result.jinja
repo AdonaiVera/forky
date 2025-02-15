@@ -1,0 +1,241 @@
+<script>
+    function getFileName(line) {
+        // Skips "|", "└", "├" found in file tree
+        const index = line.search(/[a-zA-Z0-9]/);
+        return line.substring(index).trim();
+    }
+
+    function toggleFile(element) {
+        const patternInput = document.getElementById("pattern");
+        const patternFiles = patternInput.value ? patternInput.value.split(",").map(item => item.trim()) : [];
+
+        if (element.textContent.includes("Directory structure:")) {
+            return;
+        }
+
+        element.classList.toggle('line-through');
+        element.classList.toggle('text-gray-500');
+
+        const fileName = getFileName(element.textContent);
+        const fileIndex = patternFiles.indexOf(fileName);
+
+        if (fileIndex !== -1) {
+            patternFiles.splice(fileIndex, 1);
+        } else {
+            patternFiles.push(fileName);
+        }
+
+        patternInput.value = patternFiles.join(", ");
+    }
+</script>
+{% if result %}
+    <div class="mt-10" data-results>
+        <div class="relative">
+            <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
+            </div>
+            <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 space-y-8 shadow-xl">
+                <!-- Summary and Directory Structure -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <!-- Summary Column -->
+                    <div class="md:col-span-5">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-[#FF6B6B]"
+                                     fill="currentColor"
+                                     viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                                </svg>
+                                Summary
+                            </h3>
+                        </div>
+                        <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                            <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                            </div>
+                            <textarea class="w-full h-[180px] p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none relative z-10 shadow-inner"
+                                      readonly>{{ summary }}</textarea>
+                        </div>
+                        {% if ingest_id %}
+                            <div class="flex gap-4 mt-6">
+                                <div class="relative group transform transition hover:scale-[1.02]">
+                                    <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                    </div>
+                                    <a href="/download/{{ ingest_id }}"
+                                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 font-medium">
+                                        <svg class="w-5 h-5 mr-2"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Download
+                                    </a>
+                                </div>
+                                <div class="relative group transform transition hover:scale-[1.02]">
+                                    <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                    </div>
+                                    <button onclick="copyFullDigest()"
+                                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 font-medium">
+                                        <svg class="w-5 h-5 mr-2"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                        </svg>
+                                        Copy all
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- Directory Structure Column -->
+                    <div class="md:col-span-7">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-[#FF6B6B]"
+                                     fill="currentColor"
+                                     viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                                </svg>
+                                Directory Structure
+                            </h3>
+                            <div class="relative group transform transition hover:scale-[1.02]">
+                                <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                </div>
+                                <button onclick="copyText('directory-structure')"
+                                        class="px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2 font-medium">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                            <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                            </div>
+                            <div class="directory-structure w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-y focus:outline-none relative z-10 h-[215px] overflow-auto shadow-inner"
+                                 id="directory-structure-container"
+                                 readonly>
+                                <input type="hidden" id="directory-structure-content" value="{{ tree }}" />
+                                {% for line in tree.splitlines() %}
+                                    <div name="tree-line"
+                                         class="cursor-pointer hover:line-through hover:text-gray-500 transition-colors duration-150"
+                                         onclick="toggleFile(this)">{{ line }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Diagram Section -->
+                <!-- Overview Diagram Section -->
+                <div class="mt-10">
+                    <div class="relative">
+                        <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
+                        </div>
+                        <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 space-y-8 shadow-xl">
+                            <div>
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-[#FF6B6B]"
+                                             fill="currentColor"
+                                             viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        Overview Diagram
+                                    </h3>
+                                    <div class="relative group transform transition hover:scale-[1.02]">
+                                        <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                        </div>
+                                        <button onclick="copyText('overview-diagram')"
+                                                class="px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2 font-medium">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                            Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                                    <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                    </div>
+                                    <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 h-[400px] overflow-auto shadow-inner"
+                                         id="overview-diagram">
+                                        <div class="mermaid">
+                                            {{ overview_diagram | safe if overview_diagram else 'graph TD; A[No overview diagram available]' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Detailed Diagram Section -->
+                            <div class="mt-8">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-[#FF6B6B]"
+                                             fill="currentColor"
+                                             viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        Detailed Diagram
+                                    </h3>
+                                    <div class="relative group transform transition hover:scale-[1.02]">
+                                        <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                        </div>
+                                        <button onclick="copyText('detailed-diagram')"
+                                                class="px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2 font-medium">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                            Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                                    <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                                    </div>
+                                    <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 h-[400px] overflow-auto shadow-inner"
+                                         id="detailed-diagram">
+                                        <div class="mermaid">
+                                            {{ detailed_diagram | safe if detailed_diagram else 'graph TD; A[No detailed diagram available]' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Full Digest -->
+                <div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#FF6B6B]"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
+                            </svg>
+                            Files Content
+                        </h3>
+                        <div class="relative group transform transition hover:scale-[1.02]">
+                            <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                            </div>
+                            <button onclick="copyText('result-text')"
+                                    class="px-6 py-3 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-[3px] border-gray-900 text-gray-900 rounded-lg group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2 font-medium">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                        <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
+                        </div>
+                        <textarea class="result-text w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-y focus:outline-none relative z-10 shadow-inner"
+                                  style="min-height: {{ '600px' if content else 'calc(100vh-800px)' }}"
+                                  readonly>{{ content }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

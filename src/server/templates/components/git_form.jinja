@@ -1,0 +1,73 @@
+<script>
+    function changePattern(element) {
+        console.log("Pattern changed", element.value);
+        let patternType = element.value;
+        const files = document.getElementsByName("tree-line");
+
+        Array.from(files).forEach((element) => {
+            if (element.textContent.includes("Directory structure:")) {
+                return;
+            }
+
+            element.classList.toggle('line-through');
+            element.classList.toggle('text-gray-500');
+            element.classList.toggle('hover:text-inherit');
+            element.classList.toggle('hover:no-underline');
+            element.classList.toggle('hover:line-through');
+            element.classList.toggle('hover:text-gray-500');
+        });
+    }
+</script>
+<div class="relative">
+    <div class="w-full h-full absolute inset-0 bg-[#4ECDC4] rounded-xl translate-y-2 translate-x-2 opacity-80"></div>
+    <div class="rounded-xl relative z-20 pl-8 sm:pl-10 pr-8 sm:pr-16 py-8 border-[3px] border-gray-900 bg-[#FFF6E9]">
+        <form class="flex md:flex-row flex-col w-full h-full justify-center items-stretch space-y-5 md:space-y-0 md:space-x-5"
+              id="ingestForm"
+              onsubmit="handleSubmit(event{% if is_index %}, true{% endif %})">
+            <div class="relative w-full h-full">
+                <div class="w-full h-full rounded bg-[#4ECDC4] translate-y-1 translate-x-1 absolute inset-0 z-10 opacity-70"></div>
+                <input type="text"
+                       name="input_text"
+                       id="input_text"
+                       placeholder="Ready to join the fun? Enter a repository URL!"
+                       value="{{ repo_url if repo_url else '' }}"
+                       required
+                       class="border-[3px] w-full relative z-20 border-gray-900 placeholder-gray-900/60 text-lg font-medium focus:outline-none py-3.5 px-6 rounded bg-[#FFF6E9]">
+            </div>
+            <div class="relative w-auto flex-shrink-0 h-full group">
+                <div class="w-full h-full rounded bg-[#4ECDC4] translate-y-1 translate-x-1 absolute inset-0 z-10 opacity-70"></div>
+                <button type="submit"
+                        class="py-3.5 rounded px-6 group-hover:-translate-y-px group-hover:-translate-x-px ease-out duration-300 z-20 relative w-full border-[3px] border-gray-900 font-bold bg-[#4ECDC4] tracking-wide text-lg flex-shrink-0 text-gray-900 hover:bg-[#4ECDC4]/90 transition-all">
+                    Let's Contribute together!
+                </button>
+            </div>
+            <input type="hidden" name="pattern_type" value="include">
+            <input type="hidden" name="pattern" value="">
+            <input type="hidden" name="max_file_size" value="50">
+        </form>
+        {% if show_examples %}
+            <!-- Example repositories section -->
+            <div class="mt-4">
+                <p class="text-gray-900 font-medium mb-1">Join these amazing projects:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="submitExample('https://github.com/roboflow/supervision')"
+                            class="px-4 py-1 bg-[#FFF6E9] hover:bg-[#FFD93D] text-gray-900 rounded transition-all duration-200 border-[3px] border-gray-900 relative hover:-translate-y-px hover:-translate-x-px font-bold">
+                        Supervision
+                    </button>
+                    <button onclick="submitExample('https://github.com/voxel51/fiftyone')"
+                            class="px-4 py-1 bg-[#FFF6E9] hover:bg-[#FFD93D] text-gray-900 rounded transition-all duration-200 border-[3px] border-gray-900 relative hover:-translate-y-px hover:-translate-x-px font-bold">
+                        FiftyOne
+                    </button>
+                    <button onclick="submitExample('https://github.com/keras-team/keras')"
+                            class="px-4 py-1 bg-[#FFF6E9] hover:bg-[#FFD93D] text-gray-900 rounded transition-all duration-200 border-[3px] border-gray-900 relative hover:-translate-y-px hover:-translate-x-px font-bold">
+                        Keras
+                    </button>
+                    <button onclick="submitExample('https://github.com/tensorflow/tensorflow')"
+                            class="px-4 py-1 bg-[#FFF6E9] hover:bg-[#FFD93D] text-gray-900 rounded transition-all duration-200 border-[3px] border-gray-900 relative hover:-translate-y-px hover:-translate-x-px font-bold">
+                        TensorFlow
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>

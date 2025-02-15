@@ -1,0 +1,58 @@
+{% extends "base.jinja" %}
+{% block content %}
+    {% if error_message %}
+        <div class="mb-6 p-4 bg-forky-red/10 border border-forky-red/20 rounded-lg text-forky-red"
+             id="error-message"
+             data-message="{{ error_message }}">{{ error_message }}</div>
+    {% endif %}
+    {% with is_index=true, show_examples=false %}
+        {% include 'components/git_form.jinja' %}
+    {% endwith %}
+    {% if loading %}
+        <div class="relative mt-10">
+            <div class="w-full h-full absolute inset-0 bg-forky-blue rounded-xl translate-y-2 translate-x-2 opacity-70"></div>
+            <div class="bg-forky-cream rounded-xl border-[3px] border-forky-red p-6 relative z-20 flex flex-col items-center space-y-4">
+                <div class="loader border-8 border-forky-cream border-t-8 border-t-forky-yellow rounded-full w-16 h-16 animate-spin">
+                </div>
+                <p class="text-lg font-bold text-forky-red animate-bounce">Making Open Source Fun...</p>
+            </div>
+        </div>
+    {% endif %}
+    {% include 'components/result.jinja' %}
+{% endblock content %}
+{% block extra_scripts %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlInput = document.getElementById('input_text');
+        const form = document.getElementById('ingestForm');
+        if (urlInput && urlInput.value.trim() && form) {
+            // Wait for repository data to be loaded before submitting
+            waitForStars().then(() => {
+                const submitEvent = new SubmitEvent('submit', {
+                    cancelable: true,
+                    bubbles: true
+                });
+                Object.defineProperty(submitEvent, {
+                    value: form,
+                    enumerable: true
+                });
+                handleSubmit(submitEvent, false);
+            });
+        }
+    });
+
+    function waitForStars() {
+        return new Promise((resolve) => {
+            const checkStars = () => {
+                const stars = document.getElementById('github-stars');
+                if (stars && stars.textContent !== '0') {
+                    resolve();
+                } else {
+                    setTimeout(checkStars, 10);
+                }
+            };
+            checkStars();
+        });
+    }
+    </script>
+{% endblock extra_scripts %}

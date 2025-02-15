@@ -1,0 +1,47 @@
+{% extends "base.jinja" %}
+{% block extra_head %}
+    <script>
+    function submitExample(repoName) {
+        const input = document.getElementById('input_text');
+        input.value = repoName;
+        input.focus();
+    }
+    </script>
+{% endblock %}
+{% block content %}
+    <div class="mb-8">
+        <div class="relative w-full mx-auto flex flex-col items-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter w-full text-center relative text-forky-red">
+                Your AI <span class="text-gray-900">Code</span>
+                <br>
+                <span class="relative z-10">Companion</span>&nbsp;
+            </h1>
+            <img src="https://storage.googleapis.com/tecla/forky_2.png"
+                 alt="Forky waving"
+                 class="h-auto w-32 sm:w-40 md:w-48 lg:w-56 -mt-1 sm:-mt-1 md:-mt-2 lg:-mt-3 transform hover:scale-110 transition-transform duration-300 relative z-0" />
+        </div>
+        <div class="text-gray-700 max-w-2xl mx-auto text-center mt-8 space-y-4 bg-forky-cream p-6 rounded-xl border-4 border-forky-red shadow-lg">
+            <p class="text-lg text-forky-red font-bold">
+                Navigate repos, understand code, and improve pull requests with real-time AI magic powered by Gemini 2.0.
+            </p>
+            <p class="text-lg">
+                Ask questions, get instant PR insights, and receive smart suggestions—all while using RAG, AI agents, and fine-tuned CodeGemma to make contributing faster, easier, and way more fun!
+            </p>
+        </div>
+    </div>
+    {% if error_message %}
+        <div class="mb-6 p-4 bg-forky-red/10 border-4 border-forky-red rounded-xl text-forky-red font-bold"
+             id="error-message"
+             data-message="{{ error_message }}">{{ error_message }}</div>
+    {% endif %}
+    {% with is_index=true, show_examples=true %}
+        {% include 'components/git_form.jinja' %}
+    {% endwith %}
+    <p class="text-forky-red text-sm max-w-2xl mx-auto text-center mt-4 bg-forky-cream p-3 rounded-lg border-[3px] border-forky-red">
+        You can also replace 'hub' with 'forky' in any GitHub URL.
+    </p>
+    <p class="text-gray-600 text-xs max-w-2xl mx-auto text-center mt-2">
+        Note: Large repositories like TensorFlow or FiftyOne may take 30-60 seconds to process.
+    </p>
+    {% include 'components/result.jinja' %}
+{% endblock %}
