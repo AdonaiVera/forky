@@ -19,9 +19,10 @@ pip install -r requirements.txt
 
 ## Run in Local
 
-   ```bash
-   python -m uvicorn src.server.main:app --reload
-   ```
+```bash
+cd src
+python -m uvicorn server.main:app --reload
+```
 
 ## 🚀 Features
 
@@ -33,12 +34,16 @@ pip install -r requirements.txt
 
    ``` bash
    docker build -t forky .
+
    ```
 
 2. Run the container:
 
    ``` bash
    docker run -d --name forky -p 8000:8000 forky
+
+   # For local development
+   docker run --env-file .env -d --name forky -p 8000:8000 forky
    ```
 
 The application will be available at `http://localhost:8000`.
@@ -46,7 +51,7 @@ The application will be available at `http://localhost:8000`.
 If you are hosting it on a domain, you can specify the allowed hostnames via env variable `ALLOWED_HOSTS`.
 
    ```bash
-   # Default: "gitingest.com, *.gitingest.com, localhost, 127.0.0.1".
+   # Default: "forky.com, *.forky.com, localhost, 127.0.0.1".
    ALLOWED_HOSTS="example.com, localhost, 127.0.0.1"
    ```
 

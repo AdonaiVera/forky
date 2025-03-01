@@ -1,12 +1,19 @@
-""" Process a query by parsing input and generating a summary using gitingest. """
+""" Process a query by parsing input and generating a summary using gitingest, google genai, and a custom AI agent. """
 
 import asyncio
 from functools import partial
 
+import requests
 from fastapi import Request
 from gitingest import ingest_async
 from starlette.templating import _TemplateResponse
 
+from server.ai.content_provider import (get_community_support,
+                                        get_contribution_guidelines,
+                                        get_general_overview_diagram,
+                                        get_installation_usage,
+                                        get_project_description,
+                                        get_project_metrics)
 from server.ai.diagram_generator import DiagramGenerator
 from server.server_config import EXAMPLE_REPOS, MAX_DISPLAY_SIZE, templates
 from server.server_utils import Colors, log_slider_to_size
@@ -49,6 +56,16 @@ async def process_query(
     _TemplateResponse
         Rendered template response containing the processed results or an error message.
     """
+    # Extract owner and repo from input_text
+    owner, repo = input_text.split("/")[-2], input_text.split("/")[-1]
+    url = f"https://api.github.com/repos/{owner}/{repo}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        repo_data = response.json()
+    else:
+        repo_data = {}
+
     template = "index.jinja" if is_index else "git.jinja"
     template_response = partial(templates.TemplateResponse, name=template)
     max_file_size = log_slider_to_size(slider_position)
@@ -60,6 +77,7 @@ async def process_query(
         "default_file_size": slider_position,
         "pattern_type": pattern_type,
         "pattern": pattern,
+        "repo_data": repo_data,
     }
 
     try:
@@ -108,6 +126,12 @@ async def process_query(
             "content": content,
             "overview_diagram": overview_diagram,
             "detailed_diagram": detailed_diagram,
+            "project_description": get_project_description(tree, content),
+            "installation_usage": get_installation_usage(),
+            "general_overview_diagram": get_general_overview_diagram(),
+            "contribution_guidelines": get_contribution_guidelines(),
+            "community_support": get_community_support(),
+            "project_metrics": get_project_metrics(repo_data),
         }
     )
 

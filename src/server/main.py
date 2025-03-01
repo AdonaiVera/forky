@@ -37,8 +37,8 @@ if allowed_hosts:
 else:
     # Define the default allowed hosts for the application
     default_allowed_hosts = [
-        "gitingest.com",
-        "*.gitingest.com",
+        "forky.com",
+        "*.forky.com",
         "localhost",
         "127.0.0.1",
     ]

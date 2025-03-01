@@ -38,11 +38,6 @@ repos:
       - id: absolufy-imports
         description: "Automatically convert relative imports to absolute. (Use `args: [--never]` to revert.)"
 
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
-
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.19.1
     hooks:

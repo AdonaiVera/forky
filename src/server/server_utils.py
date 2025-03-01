@@ -9,11 +9,11 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
-from gitingest.config import TMP_BASE_PATH
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from config import TMP_BASE_PATH
 from server.server_config import DELETE_REPO_AFTER
 
 # Initialize a rate limiter

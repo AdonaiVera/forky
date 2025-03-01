@@ -1,6 +1,7 @@
 click>=8.0.0
 fastapi[standard]
 gitingest
+google-genai
 google-generativeai
 python-dotenv
 slowapi
