@@ -24,10 +24,16 @@ app.state.limiter = limiter
 # Register the custom exception handler for rate limits
 app.add_exception_handler(RateLimitExceeded, rate_limit_exception_handler)
 
-
 # Mount static files dynamically to serve CSS, JS, and other static assets
 static_dir = Path(__file__).parent.parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+# Define the path to the diagrams directory
+diagrams_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'diagrams')
+
+# Mount the static files directory
+app.mount("/diagrams", StaticFiles(directory=diagrams_dir), name="diagrams")
 
 
 # Fetch allowed hosts from the environment or use the default values

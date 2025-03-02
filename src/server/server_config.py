@@ -7,11 +7,14 @@ DELETE_REPO_AFTER: int = 60 * 60  # In seconds
 
 
 EXAMPLE_REPOS: list[dict[str, str]] = [
-    {"name": "Gitingest", "url": "https://github.com/cyclotruc/gitingest"},
-    {"name": "FastAPI", "url": "https://github.com/tiangolo/fastapi"},
-    {"name": "Flask", "url": "https://github.com/pallets/flask"},
-    {"name": "Excalidraw", "url": "https://github.com/excalidraw/excalidraw"},
-    {"name": "ApiAnalytics", "url": "https://github.com/tom-draper/api-analytics"},
+    {"name": "Supervision", "url": "https://github.com/roboflow/supervision"},
+    {"name": "FiftyOne", "url": "https://github.com/voxel51/fiftyone"},
+    {"name": "Keras", "url": "https://github.com/keras-team/keras"},
+    {"name": "TensorFlow", "url": "https://github.com/tensorflow/tensorflow"},
+    {"name": "VisionAgent", "url": " https://github.com/landing-ai/vision-agent"},
+
+
+
 ]
 
 templates = Jinja2Templates(directory="server/templates")

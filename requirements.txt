@@ -4,6 +4,7 @@ gitingest
 google-genai
 google-generativeai
 python-dotenv
+pyvis==0.3.2
 slowapi
 starlette
 tiktoken

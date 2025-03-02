@@ -53,7 +53,39 @@
                                 <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
                                 </div>
                                 <div class="relative z-10 p-4 font-mono text-sm bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg shadow-inner">
-                                    <p>{{ project_description }}</p>
+                                    <!-- Summary Section -->
+                                    <div class="mb-6">
+                                        <h4 class="text-lg font-bold mb-2">📚 Summary</h4>
+                                        <p class="text-gray-800">{{ project_description.summary }}</p>
+                                    </div>
+                                    <!-- Use Cases Section -->
+                                    <div class="mb-6">
+                                        <h4 class="text-lg font-bold mb-2">🎯 What You Can Build</h4>
+                                        <ul class="list-none space-y-2">
+                                            {% for use_case in project_description.use_cases %}
+                                                <li class="flex items-center gap-2">
+                                                    <span class="text-[#FF6B6B] font-bold">{{ loop.index }}.</span>
+                                                    {{ use_case }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <!-- Contribution Insights Section -->
+                                    <div>
+                                        <h4 class="text-lg font-bold mb-2">🌱 Why Contribute</h4>
+                                        <ul class="list-none space-y-2">
+                                            {% for insight in project_description.contribution_insights %}
+                                                <li class="flex items-center gap-2">
+                                                    <span class="text-[#4ECDC4]">
+                                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                                                        </svg>
+                                                    </span>
+                                                    {{ insight }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -63,12 +95,12 @@
             <!-- Project Metrics & Insights (1/3 space) -->
             <div class="lg:col-span-1">
                 <div class="relative">
-                    <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-1 translate-x-2 opacity-80">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-1 translate-x-1 opacity-80">
                     </div>
                     <div class="relative z-20 p-6 space-y-6 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-xl shadow-xl">
                         <!-- Project Metrics & Insights -->
                         <div class="mt-4">
-                            <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center mb-4">
                                 <h3 class="flex items-center gap-2 text-xl font-bold text-gray-900">
                                     <svg class="w-5 h-5 text-[#FF6B6B]"
                                          fill="currentColor"
@@ -82,7 +114,7 @@
                                 <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
                                 </div>
                                 <div class="relative z-10 p-4 font-mono text-sm bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg shadow-inner">
-                                    <ul class="space-y-2">
+                                    <ul class="space-y-2 pl-0">
                                         <li class="flex items-center gap-2">
                                             <svg class="w-4 h-4 text-[#FF6B6B]"
                                                  fill="currentColor"
@@ -111,7 +143,7 @@
                                             <svg class="w-4 h-4 text-[#FF6B6B]"
                                                  fill="currentColor"
                                                  viewBox="0 0 24 24">
-                                                <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                                                <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2M12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
                                             </svg>
                                             Open Issues: {{ project_metrics.open_issues }}
                                         </li>
@@ -159,103 +191,56 @@
                                     <svg class="w-5 h-5 text-[#FF6B6B]"
                                          fill="currentColor"
                                          viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
+                                        <path d="M13 7H7v6h6V7z" />
+                                        <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd" />
                                     </svg>
                                     Installation & Usage
                                 </h3>
                             </div>
-                            <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
+                            <div class="relative transform transition-all duration-200 hover:scale-[1.01] group">
                                 <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
                                 </div>
-                                <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 shadow-inner">
-                                    <pre>{{ installation_usage }}</pre>
+                                <div class="w-full p-5 bg-gray-900 border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 shadow-inner">
+                                    <div class="relative">
+                                        <pre class="overflow-x-auto whitespace-pre-wrap text-gray-200"><code class="language-bash" id="installation-code">{{ installation_usage | safe }}</code></pre>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Diagrams (takes up 3/3 of the space) -->
+            <!-- Diagrams Section -->
             <div class="lg:col-span-3">
                 <div class="relative">
                     <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
                     </div>
-                    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 space-y-8 shadow-xl">
-                        <!-- Diagrams -->
-                        <div class="mt-8">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-[#FF6B6B]"
-                                         fill="currentColor"
-                                         viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Diagrams
-                                </h3>
-                            </div>
+                    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 shadow-xl">
+                        <!-- Diagrams Content -->
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2 mb-6">
+                                <svg class="w-5 h-5 text-[#FF6B6B]"
+                                     fill="currentColor"
+                                     viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Repository Structure
+                            </h3>
                             <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
                                 <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
                                 </div>
-                                <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 shadow-inner">
-                                    <p>{{ overview_diagram }}</p>
-                                    <p>{{ detailed_diagram }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Community & Support and Contribution Guidelines (each takes up 1/3 of the space) -->
-            <div class="lg:col-span-1">
-                <div class="relative">
-                    <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
-                    </div>
-                    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 space-y-8 shadow-xl">
-                        <!-- Community & Support -->
-                        <div class="mt-8">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-[#FF6B6B]"
-                                         fill="currentColor"
-                                         viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Community & Support
-                                </h3>
-                            </div>
-                            <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
-                                <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
-                                </div>
-                                <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 shadow-inner">
-                                    <p>{{ community_support }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="lg:col-span-1">
-                <div class="relative">
-                    <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
-                    </div>
-                    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 space-y-8 shadow-xl">
-                        <!-- Contribution Guidelines -->
-                        <div class="mt-8">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-[#FF6B6B]"
-                                         fill="currentColor"
-                                         viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Contribution Guidelines
-                                </h3>
-                            </div>
-                            <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
-                                <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
-                                </div>
-                                <div class="w-full p-5 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm relative z-10 shadow-inner">
-                                    <p>{{ contribution_guidelines }}</p>
+                                <div class="w-full p-5 bg-white border-[3px] border-gray-900 rounded-lg relative z-10 shadow-inner">
+                                    <div id="repo-structure-graph" class="w-full h-[400px]">
+                                        {% if general_overview_diagram %}
+                                            <iframe src="/diagrams/{{ general_overview_diagram }}"
+                                                    class="w-full h-full border-0"
+                                                    sandbox="allow-scripts allow-same-origin"
+                                                    onload="this.contentWindow.document.querySelectorAll('script').forEach(script => { if (script.src && script.src.includes('posthog.com')) { script.remove(); } })">
+                                            </iframe>
+                                        {% else %}
+                                            <div class="flex items-center justify-center h-full text-gray-500">No diagram available for this repository</div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>

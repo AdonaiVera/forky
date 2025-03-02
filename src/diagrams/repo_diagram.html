@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 400px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+
+
+
+
+
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+
+
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+
+
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+
+
+
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "1_cyclotruc-gitingest", "label": "cyclotruc-gitingest", "shape": "dot", "size": 15, "title": "cyclotruc-gitingest"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_README.md", "label": "README.md", "shape": "dot", "size": 15, "title": "README.md"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_CODE_OF_CONDUCT.md", "label": "CODE_OF_CONDUCT.md", "shape": "dot", "size": 15, "title": "CODE_OF_CONDUCT.md"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_CONTRIBUTING.md", "label": "CONTRIBUTING.md", "shape": "dot", "size": 15, "title": "CONTRIBUTING.md"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_Dockerfile", "label": "Dockerfile", "shape": "dot", "size": 15, "title": "Dockerfile"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_LICENSE", "label": "LICENSE", "shape": "dot", "size": 15, "title": "LICENSE"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_SECURITY.md", "label": "SECURITY.md", "shape": "dot", "size": 15, "title": "SECURITY.md"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_pyproject.toml", "label": "pyproject.toml", "shape": "dot", "size": 15, "title": "pyproject.toml"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_requirements-dev.txt", "label": "requirements-dev.txt", "shape": "dot", "size": 15, "title": "requirements-dev.txt"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_requirements.txt", "label": "requirements.txt", "shape": "dot", "size": 15, "title": "requirements.txt"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_.dockerignore", "label": ".dockerignore", "shape": "dot", "size": 15, "title": ".dockerignore"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_.pre-commit-config.yaml", "label": ".pre-commit-config.yaml", "shape": "dot", "size": 15, "title": ".pre-commit-config.yaml"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_docs", "label": "docs", "shape": "dot", "size": 15, "title": "docs"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_src", "label": "src", "shape": "dot", "size": 15, "title": "src"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_gitingest", "label": "gitingest", "shape": "dot", "size": 15, "title": "gitingest"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2___init__.py", "label": "__init__.py", "shape": "dot", "size": 15, "title": "__init__.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_cli.py", "label": "cli.py", "shape": "dot", "size": 15, "title": "cli.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_config.py", "label": "config.py", "shape": "dot", "size": 15, "title": "config.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_exceptions.py", "label": "exceptions.py", "shape": "dot", "size": 15, "title": "exceptions.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_ignore_patterns.py", "label": "ignore_patterns.py", "shape": "dot", "size": 15, "title": "ignore_patterns.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_notebook_utils.py", "label": "notebook_utils.py", "shape": "dot", "size": 15, "title": "notebook_utils.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_query_ingestion.py", "label": "query_ingestion.py", "shape": "dot", "size": 15, "title": "query_ingestion.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_query_parser.py", "label": "query_parser.py", "shape": "dot", "size": 15, "title": "query_parser.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_repository_clone.py", "label": "repository_clone.py", "shape": "dot", "size": 15, "title": "repository_clone.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_repository_ingest.py", "label": "repository_ingest.py", "shape": "dot", "size": 15, "title": "repository_ingest.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_utils.py", "label": "utils.py", "shape": "dot", "size": 15, "title": "utils.py"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_server", "label": "server", "shape": "dot", "size": 15, "title": "server"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_main.py", "label": "main.py", "shape": "dot", "size": 15, "title": "main.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_query_processor.py", "label": "query_processor.py", "shape": "dot", "size": 15, "title": "query_processor.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_server_config.py", "label": "server_config.py", "shape": "dot", "size": 15, "title": "server_config.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_server_utils.py", "label": "server_utils.py", "shape": "dot", "size": 15, "title": "server_utils.py"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_routers", "label": "routers", "shape": "dot", "size": 15, "title": "routers"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_download.py", "label": "download.py", "shape": "dot", "size": 15, "title": "download.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_dynamic.py", "label": "dynamic.py", "shape": "dot", "size": 15, "title": "dynamic.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_index.py", "label": "index.py", "shape": "dot", "size": 15, "title": "index.py"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_templates", "label": "templates", "shape": "dot", "size": 15, "title": "templates"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_api.jinja", "label": "api.jinja", "shape": "dot", "size": 15, "title": "api.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_base.jinja", "label": "base.jinja", "shape": "dot", "size": 15, "title": "base.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_git.jinja", "label": "git.jinja", "shape": "dot", "size": 15, "title": "git.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_index.jinja", "label": "index.jinja", "shape": "dot", "size": 15, "title": "index.jinja"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_components", "label": "components", "shape": "dot", "size": 15, "title": "components"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_footer.jinja", "label": "footer.jinja", "shape": "dot", "size": 15, "title": "footer.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_git_form.jinja", "label": "git_form.jinja", "shape": "dot", "size": 15, "title": "git_form.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_navbar.jinja", "label": "navbar.jinja", "shape": "dot", "size": 15, "title": "navbar.jinja"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_result.jinja", "label": "result.jinja", "shape": "dot", "size": 15, "title": "result.jinja"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_static", "label": "static", "shape": "dot", "size": 15, "title": "static"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_robots.txt", "label": "robots.txt", "shape": "dot", "size": 15, "title": "robots.txt"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_js", "label": "js", "shape": "dot", "size": 15, "title": "js"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_utils.js", "label": "utils.js", "shape": "dot", "size": 15, "title": "utils.js"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_tests", "label": "tests", "shape": "dot", "size": 15, "title": "tests"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_conftest.py", "label": "conftest.py", "shape": "dot", "size": 15, "title": "conftest.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_cli.py", "label": "test_cli.py", "shape": "dot", "size": 15, "title": "test_cli.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_flow_integration.py", "label": "test_flow_integration.py", "shape": "dot", "size": 15, "title": "test_flow_integration.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_notebook_utils.py", "label": "test_notebook_utils.py", "shape": "dot", "size": 15, "title": "test_notebook_utils.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_query_ingestion.py", "label": "test_query_ingestion.py", "shape": "dot", "size": 15, "title": "test_query_ingestion.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_repository_clone.py", "label": "test_repository_clone.py", "shape": "dot", "size": 15, "title": "test_repository_clone.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_.pylintrc", "label": ".pylintrc", "shape": "dot", "size": 15, "title": ".pylintrc"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_query_parser", "label": "query_parser", "shape": "dot", "size": 15, "title": "query_parser"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_git_host_agnostic.py", "label": "test_git_host_agnostic.py", "shape": "dot", "size": 15, "title": "test_git_host_agnostic.py"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "2_test_query_parser.py", "label": "test_query_parser.py", "shape": "dot", "size": 15, "title": "test_query_parser.py"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "2_.github", "label": ".github", "shape": "dot", "size": 15, "title": ".github"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "3_dependabot.yml", "label": "dependabot.yml", "shape": "dot", "size": 15, "title": "dependabot.yml"}, {"color": "#FF6B6B", "font": {"color": "#000000"}, "id": "3_workflows", "label": "workflows", "shape": "dot", "size": 15, "title": "workflows"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "4_ci.yml", "label": "ci.yml", "shape": "dot", "size": 15, "title": "ci.yml"}, {"color": "#4ECDC4", "font": {"color": "#000000"}, "id": "4_publish.yml", "label": "publish.yml", "shape": "dot", "size": 15, "title": "publish.yml"}]);
+                  edges = new vis.DataSet([{"from": "1_cyclotruc-gitingest", "to": "2_README.md"}, {"from": "1_cyclotruc-gitingest", "to": "2_CODE_OF_CONDUCT.md"}, {"from": "1_cyclotruc-gitingest", "to": "2_CONTRIBUTING.md"}, {"from": "1_cyclotruc-gitingest", "to": "2_Dockerfile"}, {"from": "1_cyclotruc-gitingest", "to": "2_LICENSE"}, {"from": "1_cyclotruc-gitingest", "to": "2_SECURITY.md"}, {"from": "1_cyclotruc-gitingest", "to": "2_pyproject.toml"}, {"from": "1_cyclotruc-gitingest", "to": "2_requirements-dev.txt"}, {"from": "1_cyclotruc-gitingest", "to": "2_requirements.txt"}, {"from": "1_cyclotruc-gitingest", "to": "2_.dockerignore"}, {"from": "1_cyclotruc-gitingest", "to": "2_.pre-commit-config.yaml"}, {"from": "1_cyclotruc-gitingest", "to": "2_docs"}, {"from": "1_cyclotruc-gitingest", "to": "2_src"}, {"from": "1_cyclotruc-gitingest", "to": "2_gitingest"}, {"from": "1_cyclotruc-gitingest", "to": "2___init__.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_cli.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_config.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_exceptions.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_ignore_patterns.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_notebook_utils.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_query_ingestion.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_query_parser.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_repository_clone.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_repository_ingest.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_utils.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_server"}, {"from": "1_cyclotruc-gitingest", "to": "2_main.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_query_processor.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_server_config.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_server_utils.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_routers"}, {"from": "1_cyclotruc-gitingest", "to": "2_download.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_dynamic.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_index.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_templates"}, {"from": "1_cyclotruc-gitingest", "to": "2_api.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_base.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_git.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_index.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_components"}, {"from": "1_cyclotruc-gitingest", "to": "2_footer.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_git_form.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_navbar.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_result.jinja"}, {"from": "1_cyclotruc-gitingest", "to": "2_static"}, {"from": "1_cyclotruc-gitingest", "to": "2_robots.txt"}, {"from": "1_cyclotruc-gitingest", "to": "2_js"}, {"from": "1_cyclotruc-gitingest", "to": "2_utils.js"}, {"from": "1_cyclotruc-gitingest", "to": "2_tests"}, {"from": "1_cyclotruc-gitingest", "to": "2_conftest.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_cli.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_flow_integration.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_notebook_utils.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_query_ingestion.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_repository_clone.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_.pylintrc"}, {"from": "1_cyclotruc-gitingest", "to": "2_query_parser"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_git_host_agnostic.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_test_query_parser.py"}, {"from": "1_cyclotruc-gitingest", "to": "2_.github"}, {"from": "2_.github", "to": "3_dependabot.yml"}, {"from": "2_.github", "to": "3_workflows"}, {"from": "3_workflows", "to": "4_ci.yml"}, {"from": "3_workflows", "to": "4_publish.yml"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -3000,
+            "springConstant": 0.001,
+            "springLength": 150
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+
+
+
+
+
+                  network = new vis.Network(container, data, options);
+
+
+
+
+
+
+
+
+
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -8,18 +8,12 @@ from fastapi import Request
 from gitingest import ingest_async
 from starlette.templating import _TemplateResponse
 
-from server.ai.content_provider import (get_community_support,
-                                        get_contribution_guidelines,
-                                        get_general_overview_diagram,
+from server.ai.content_provider import (get_general_overview_diagram,
                                         get_installation_usage,
                                         get_project_description,
                                         get_project_metrics)
-from server.ai.diagram_generator import DiagramGenerator
 from server.server_config import EXAMPLE_REPOS, MAX_DISPLAY_SIZE, templates
 from server.server_utils import Colors, log_slider_to_size
-
-# Initialize the diagram generator (add this at module level)
-diagram_generator = DiagramGenerator()
 
 
 async def process_query(
@@ -81,11 +75,15 @@ async def process_query(
     }
 
     try:
-        summary, tree, content = await ingest_async(
-            source=input_text,
-            max_file_size=max_file_size,
-            include_patterns=pattern if pattern_type == "include" else None,
-            exclude_patterns=pattern if pattern_type == "exclude" else None,
+        # Set a timeout value (in seconds) to prevent long-running operations
+        summary, tree, content = await asyncio.wait_for(
+            ingest_async(
+                source=input_text,
+                max_file_size=max_file_size,
+                include_patterns=pattern if pattern_type == "include" else None,
+                exclude_patterns=pattern if pattern_type == "exclude" else None,
+            ),
+            timeout=300
         )
 
     except Exception as e:
@@ -113,24 +111,15 @@ async def process_query(
         summary=summary,
     )
 
-    # Generate diagram
-    overview_diagram, detailed_diagram = await diagram_generator.generate_diagrams(
-        tree, content
-    )
-
     context.update(
         {
             "result": True,
             "summary": summary,
             "tree": tree,
             "content": content,
-            "overview_diagram": overview_diagram,
-            "detailed_diagram": detailed_diagram,
             "project_description": get_project_description(tree, content),
-            "installation_usage": get_installation_usage(),
-            "general_overview_diagram": get_general_overview_diagram(),
-            "contribution_guidelines": get_contribution_guidelines(),
-            "community_support": get_community_support(),
+            "installation_usage": get_installation_usage(url),
+            "general_overview_diagram": get_general_overview_diagram(url, tree),
             "project_metrics": get_project_metrics(repo_data),
         }
     )

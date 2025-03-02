@@ -13,7 +13,7 @@ load_dotenv()
 class AnalyzeRepositoryResponse(BaseModel):
     summary: str
     use_cases: list[str]
-    contribution_insights: str
+    contribution_insights: list[str]
 
 
 class GeminiClient:
@@ -26,8 +26,9 @@ class GeminiClient:
 
     async def generate_content(self, prompt: str) -> str | None:
         try:
-            response = await self.model.generate_content_async(prompt)
-            return response.text.strip()
+            #response = await self.client.generate_content_async(prompt)
+            #return response.text.strip()
+            return "test"
         except Exception as e:
             print(f"Error generating content with Gemini: {e}")
             return None
@@ -60,12 +61,10 @@ class GeminiClient:
         Please provide:
         1. A brief summary of the repository (max 100 words)
         2. Three specific use cases for this project
-        3. Why someone should contribute, including required skills and areas of expertise
+        3. Three specific areas that you can learn if you contribute to this project
 
         Format the response as JSON with keys: 'summary', 'use_cases', 'contribution_insights'
         """
-
-        print(prompt)
 
         try:
             response = self.client.models.generate_content(
@@ -77,25 +76,76 @@ class GeminiClient:
                 },
             )
 
-            print("--------------------------------")
-            print(response.text)
-            print(type(response.text))
-            print("--------------------------------")
+            if response and response.candidates:
+                # Extract the first candidate's parsed response
+                return json.loads(response.text)[0]
 
-            if response:
-                return json.loads(response)
             return {
                 "summary": "Error generating repository analysis",
                 "use_cases": [],
-                "contribution_insights": {},
+                "contribution_insights": []
             }
         except Exception as e:
             print(f"Error analyzing repository: {e}")
             return {
                 "summary": "Error analyzing repository",
                 "use_cases": [],
-                "contribution_insights": {},
+                "contribution_insights": []
             }
+
+    def get_installation_instructions(self, readme: str) -> str:
+        """
+        Extract installation instructions from repository description.
+
+        Parameters
+        ----------
+        repo_description : str
+            Description of the repository containing installation steps
+
+        Returns
+        -------
+        str
+            Terminal commands for installing and running the project
+        """
+        prompt = f"""
+        Given this repository description:
+        {readme}
+
+        Extract ONLY the terminal commands needed to clone, install, and run the project.
+
+        Format your response as a step-by-step guide with code blocks:
+        ```bash
+        # Step 1: Clone the repository
+        git clone [repository-url]
+        cd [repository-name]
+
+        # Step 2: Install dependencies
+        [install command]
+
+        # Step 3: Run the project
+        [run command]
+        ```
+
+        Add all the ways to do it.
+        If specific commands aren't found in the README, provide the most appropriate commands based on the project type (Python, JavaScript, etc.).
+        Include ONLY terminal commands with brief comments - no explanatory text.
+        """
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+
+            if response and response.text:
+                # Return the commands directly
+                return response.text.strip()
+
+            return "# No installation instructions found\npip install ."
+
+        except Exception as e:
+            print(f"Error getting installation instructions: {e}")
+            return "# Error retrieving installation instructions"
 
     async def chat(self, message: str) -> str:
         """
