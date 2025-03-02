@@ -2,8 +2,7 @@
 # Forky: Your AI code Companion
 
 🌟 Powered by Google Cloud credits through the #VertexAISprint program and developed in the RevolutionUC Hackathon! ✨
-
-[![Image](./docs/frontpage.gif "Forky main page")](https://forky-364607428894.us-central1.run.app/)
+[![Forky main page](./docs/frontpage.gif)](https://forky-364607428894.us-central1.run.app/)
 
 Forky helps open-source contributors navigate repos, understand code, and improve pull requests with real-time AI magic powered by Gemini 2.0. Ask questions, get instant PR insights, and receive smart suggestions—all while using RAG, and AI agents to make contributing faster, easier, and way more fun!
 
@@ -13,7 +12,7 @@ Forky helps open-source contributors navigate repos, understand code, and improv
 
 ```bash
 python -m venv .venv
-   source .venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
