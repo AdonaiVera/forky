@@ -3,11 +3,11 @@
 
 🌟 Powered by Google Cloud credits through the #VertexAISprint program and developed in the RevolutionUC Hackathon! ✨
 
-[![Image](./docs/frontpage.gif "Forky main page")](https://gitforky.com)
+[![Image](./docs/frontpage.gif "Forky main page")](https://forky-364607428894.us-central1.run.app/)
 
 Forky helps open-source contributors navigate repos, understand code, and improve pull requests with real-time AI magic powered by Gemini 2.0. Ask questions, get instant PR insights, and receive smart suggestions—all while using RAG, and AI agents to make contributing faster, easier, and way more fun!
 
-You can also replace `hub` with `forky` in any GitHub URL to access the corresponding digest.
+🚀 [Try it out!](https://forky-364607428894.us-central1.run.app/)
 
 ## 📦 Installation
 
