@@ -1,159 +1,3 @@
-<script>
-    // Define functions first
-    function addMessageToChat(role, content) {
-        const messagesContainer = document.getElementById('chat-messages');
-        const messageDiv = document.createElement('div');
-
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        if (role === 'user') {
-            messageDiv.innerHTML = `
-                <div class="flex items-start gap-2.5 flex-row-reverse">
-                    <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-900 flex items-center justify-center text-gray-900 font-bold">
-                        U
-                    </div>
-                    <div class="flex flex-col gap-1 w-full max-w-[320px]">
-                        <div class="flex items-center space-x-2 flex-row-reverse">
-                            <span class="text-sm font-semibold text-gray-900">You</span>
-                            <span class="text-sm text-gray-500">${timestamp}</span>
-                        </div>
-                        <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-gray-100 rounded-s-xl rounded-ee-xl">
-                            <p class="text-sm text-gray-900">${content}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else {
-            messageDiv.innerHTML = `
-                <div class="flex items-start gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold">
-                        AI
-                    </div>
-                    <div class="flex flex-col gap-1 w-full max-w-[320px]">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm font-semibold text-gray-900">AI Assistant</span>
-                            <span class="text-sm text-gray-500">${timestamp}</span>
-                        </div>
-                        <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl">
-                            <p class="text-sm text-gray-900">Hi! This is my code:</p>
-                            <pre class="bg-gray-100 p-2 rounded text-sm text-gray-900"><code>${content}</code></pre>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        messagesContainer.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function showTypingIndicator() {
-        const messagesContainer = document.getElementById('chat-messages');
-        const typingDiv = document.createElement('div');
-        typingDiv.id = 'typing-indicator';
-        typingDiv.innerHTML = `
-            <div class="flex items-start gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold">
-                    AI
-                </div>
-                <div class="flex flex-col gap-1 w-full max-w-[320px]">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm font-semibold text-gray-900">AI Assistant</span>
-                        <span class="text-sm text-gray-500">Typing...</span>
-                    </div>
-                    <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl">
-                        <div class="flex space-x-2">
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        messagesContainer.appendChild(typingDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function removeTypingIndicator() {
-        const typingIndicator = document.getElementById('typing-indicator');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
-    }
-
-    // Store chat history
-    let chatHistory = [];
-
-    // Send message function to handle chat communication
-    async function sendMessage() {
-        const input = document.getElementById('chat-input');
-        const message = input.value.trim();
-        if (!message) return;
-
-        // Disable input while processing
-        input.disabled = true;
-        document.getElementById('send-message-button').disabled = true;
-
-        try {
-            // Add user message to UI
-            addMessageToChat('user', message);
-
-            // Send message to backend
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                // Add assistant response to UI
-                addMessageToChat('assistant', data.response);
-            } else {
-                throw new Error('Failed to get response');
-            }
-        } catch (error) {
-            addMessageToChat('assistant', 'Sorry, there was an error processing your request. Please try again.');
-        } finally {
-            input.disabled = false;
-            document.getElementById('send-message-button').disabled = false;
-            input.focus();
-        }
-    }
-
-    // Add event listeners after functions are defined
-    document.addEventListener('DOMContentLoaded', function() {
-        // Allow sending message with Enter (Shift+Enter for new line)
-        document.getElementById('chat-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (!e.shiftKey) {
-                    sendMessage();
-                } else {
-                    // Optionally allow new line with Shift+Enter
-                    const input = e.target;
-                    const cursorPos = input.selectionStart;
-                    const textBefore = input.value.substring(0, cursorPos);
-                    const textAfter = input.value.substring(cursorPos);
-                    input.value = textBefore + "\n" + textAfter;
-                    input.selectionStart = input.selectionEnd = cursorPos + 1;
-                }
-            }
-        });
-
-        // Attach sendMessage to the button click event
-        document.querySelector('button[onclick="sendMessage()"]').addEventListener('click', sendMessage);
-
-        // Initialize chat history with welcome message
-        chatHistory.push({
-            role: 'assistant',
-            content: "Hi! I'm here to help you understand the code better. Feel free to ask any questions!"
-        });
-    });
-</script>
 <div class="relative">
     <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
     </div>
@@ -203,19 +47,107 @@
                 <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
                 </div>
                 <div class="relative z-10">
-                    <textarea id="chat-input"
-                              class="w-full p-4 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none shadow-inner"
-                              rows="3"
-                              placeholder="Ask me anything about the code..."></textarea>
-                    <button id="send-message-button"
-                            class="absolute bottom-3 right-3 p-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-2 border-gray-900 text-gray-900 rounded-lg hover:-translate-y-px hover:-translate-x-px transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-                            onclick="sendMessage()">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                    </button>
+                    <form id="chat-form" class="relative" onsubmit="event.preventDefault();">
+                        <textarea id="chat-input"
+                                  class="w-full p-4 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none shadow-inner"
+                                  rows="3"
+                                  placeholder="Ask me anything about the code..."></textarea>
+                        <button type="button"
+                                onclick="sendMessage()"
+                                class="absolute bottom-3 right-3 p-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-2 border-gray-900 text-gray-900 rounded-lg hover:-translate-y-px hover:-translate-x-px transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function addMessageToChat(role, content) {
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        if (role === 'user') {
+            messageDiv.innerHTML = `
+                <div class="flex items-start gap-2.5 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-900 flex items-center justify-center text-gray-900 font-bold">
+                        U
+                    </div>
+                    <div class="flex flex-col gap-1 w-full max-w-[320px]">
+                        <div class="flex items-center space-x-2 flex-row-reverse">
+                            <span class="text-sm font-semibold text-gray-900">You</span>
+                            <span class="text-sm text-gray-500">${timestamp}</span>
+                        </div>
+                        <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-gray-100 rounded-s-xl rounded-ee-xl">
+                            <p class="text-sm text-gray-900">${content}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold">
+                        AI
+                    </div>
+                    <div class="flex flex-col gap-1 w-full max-w-[320px]">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-semibold text-gray-900">AI Assistant</span>
+                            <span class="text-sm text-gray-500">${timestamp}</span>
+                        </div>
+                        <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl">
+                            <p class="text-sm text-gray-900">${content}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessageToChat('user', message);
+        input.value = '';
+
+        // Send to backend and get response
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            addMessageToChat('assistant', data.response);
+        } else {
+            addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
+        }
+    }
+
+    // Replace the keydown event listener with this one
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
+    });
+
+    document.getElementById('chat-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+</script>

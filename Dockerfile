@@ -27,6 +27,7 @@ RUN apt-get update \
 
 WORKDIR /app
 
+
 # Create a non-root user
 RUN useradd -m -u 1000 appuser
 

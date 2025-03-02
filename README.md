@@ -1,7 +1,7 @@
 
 # Forky: Your AI code Companion
 
-🌟 Powered by Google Cloud credits through the #VertexAISprint program! ✨
+🌟 Powered by Google Cloud credits through the #VertexAISprint program and developed in the RevolutionUC Hackathon! ✨
 
 [![Image](./docs/frontpage.png "Forky main page")](https://gitforky.com)
 
@@ -58,9 +58,9 @@ If you are hosting it on a domain, you can specify the allowed hostnames via env
 ## 🛠️ Stack
 
 - [Tailwind CSS](https://tailwindcss.com) - Frontend
+- [PyViz](https://pyviz.org) - Data visualization
 - [FastAPI](https://github.com/fastapi/fastapi) - Backend framework
 - [Jinja2](https://jinja.palletsprojects.com) - HTML templating
-- [tiktoken](https://github.com/openai/tiktoken) - Token estimation
 - [posthog](https://github.com/PostHog/posthog) - Amazing analytics
 - [gitingest](https://github.com/cyclotruc/gitingest) - Git repository analysis
 - [Gemini 2.0](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) - AI model

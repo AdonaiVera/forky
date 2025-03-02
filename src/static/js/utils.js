@@ -41,7 +41,6 @@ function copyText(className) {
         });
 }
 
-
 function handleSubmit(event, showLoading = false) {
     event.preventDefault();
     const form = event.target || document.getElementById('ingestForm');
