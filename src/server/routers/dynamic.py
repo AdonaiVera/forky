@@ -1,9 +1,9 @@
 """ This module defines the dynamic router for handling dynamic path requests. """
 
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
-from server.query_processor import process_query
+from server.query_processor import handle_chat_message, process_query
 from server.server_config import templates
 from server.server_utils import limiter
 
@@ -84,3 +84,11 @@ async def process_catch_all(
         pattern,
         is_index=False,
     )
+
+
+@router.post("/chat")
+async def chat_endpoint(request: Request) -> JSONResponse:
+    data = await request.json()
+    message = data.get("message", "")
+    response_message = await handle_chat_message(message)
+    return JSONResponse(content={"response": response_message})

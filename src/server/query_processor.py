@@ -11,9 +11,29 @@ from starlette.templating import _TemplateResponse
 from server.ai.content_provider import (get_general_overview_diagram,
                                         get_installation_usage,
                                         get_project_description,
-                                        get_project_metrics)
+                                        get_project_metrics,
+                                        get_repository_issues)
 from server.server_config import EXAMPLE_REPOS, MAX_DISPLAY_SIZE, templates
 from server.server_utils import Colors, log_slider_to_size
+
+
+async def handle_chat_message(message: str) -> str:
+    """
+    Process a chat message and return a response.
+
+    Parameters
+    ----------
+    message : str
+        The message received from the user.
+
+    Returns
+    -------
+    str
+        A response message.
+    """
+    # Example logic to generate a response
+    response = f"Received your message: {message}"
+    return response
 
 
 async def process_query(
@@ -111,6 +131,9 @@ async def process_query(
         summary=summary,
     )
 
+    # Get repository issues data
+    repository_issues = get_repository_issues(repo_data, content)
+
     context.update(
         {
             "result": True,
@@ -121,6 +144,10 @@ async def process_query(
             "installation_usage": get_installation_usage(url),
             "general_overview_diagram": get_general_overview_diagram(url, tree),
             "project_metrics": get_project_metrics(repo_data),
+            "beginner_issues": repository_issues["beginner_issues"],
+            "intermediate_issues": repository_issues["intermediate_issues"],
+            "advanced_issues": repository_issues["advanced_issues"],
+            "crazy_ideas": repository_issues["crazy_ideas"]
         }
     )
 

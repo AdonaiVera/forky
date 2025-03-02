@@ -82,7 +82,10 @@
         }
     }
 
-    // Update sendMessage function
+    // Store chat history
+    let chatHistory = [];
+
+    // Send message function to handle chat communication
     async function sendMessage() {
         const input = document.getElementById('chat-input');
         const message = input.value.trim();
@@ -93,28 +96,26 @@
         document.getElementById('send-message-button').disabled = true;
 
         try {
+            // Add user message to UI
             addMessageToChat('user', message);
-            input.value = '';
-            showTypingIndicator();
 
+            // Send message to backend
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ message })
             });
-
-            removeTypingIndicator();
 
             if (response.ok) {
                 const data = await response.json();
+                // Add assistant response to UI
                 addMessageToChat('assistant', data.response);
             } else {
                 throw new Error('Failed to get response');
             }
         } catch (error) {
-            removeTypingIndicator();
             addMessageToChat('assistant', 'Sorry, there was an error processing your request. Please try again.');
         } finally {
             input.disabled = false;
@@ -145,6 +146,12 @@
 
         // Attach sendMessage to the button click event
         document.querySelector('button[onclick="sendMessage()"]').addEventListener('click', sendMessage);
+
+        // Initialize chat history with welcome message
+        chatHistory.push({
+            role: 'assistant',
+            content: "Hi! I'm here to help you understand the code better. Feel free to ask any questions!"
+        });
     });
 </script>
 <div class="relative">

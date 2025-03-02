@@ -15,6 +15,10 @@ class AnalyzeRepositoryResponse(BaseModel):
     use_cases: list[str]
     contribution_insights: list[str]
 
+class SelectIssuesResponse(BaseModel):
+    beginner_issues: list[int]
+    intermediate_issues: list[int]
+    advanced_issues: list[int]
 
 class GeminiClient:
     def __init__(self):
@@ -23,15 +27,6 @@ class GeminiClient:
             raise ValueError("GEMINI_API_KEY environment variable is not set")
 
         self.client = genai.Client(api_key=api_key)
-
-    async def generate_content(self, prompt: str) -> str | None:
-        try:
-            #response = await self.client.generate_content_async(prompt)
-            #return response.text.strip()
-            return "test"
-        except Exception as e:
-            print(f"Error generating content with Gemini: {e}")
-            return None
 
     def analyze_repository(
         self, tree_structure: str, repo_description: str
@@ -91,6 +86,107 @@ class GeminiClient:
                 "summary": "Error analyzing repository",
                 "use_cases": [],
                 "contribution_insights": []
+            }
+
+    def generate_crazy_idea(self, repo_name: str, content: str) -> str:
+        """
+        Generate a creative and innovative feature idea for a GitHub project.
+
+        Parameters
+        ----------
+        repo_name : str
+            Name of the repository
+        content : str
+            Content/description of the repository
+
+        Returns
+        -------
+        str
+            A creative feature idea for the project
+        """
+        prompt = f"Generate 1 creative and innovative feature idea for the GitHub project '{repo_name}' which is described as: '{content}'. Make the idea 1-2 sentences long. Your response should only contain plain text without any symbols, special characters, or formatting elements."
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "text/plain",
+                },
+            )
+
+            if response and response.text:
+                return response.text
+
+            return "Error generating crazy idea"
+        except Exception as e:
+            print(f"Error generating crazy idea: {e}")
+            return "Error generating crazy idea"
+
+    def select_issues(self, issues: list, repo_name: str, content: str) -> SelectIssuesResponse:
+        """
+        Analyze and select the most relevant issues from a repository.
+
+        Parameters
+        ----------
+        issues : list
+            List of issues from the repository
+        repo_name : str
+            Name of the repository
+        content : str
+            Content/description of the repository
+
+        Returns
+        -------
+        SelectIssuesResponse
+            Object containing categorized issues (beginner, intermediate, advanced)
+        """
+
+        # Create the prompt for Gemini
+        prompt = f"""
+        Given these issues from the GitHub repository '{repo_name}':
+        {json.dumps(issues, indent=2)}
+
+        And this repository description:
+        {content[:1000]}  # Limit content length
+
+        Categorize the issues into three categories:
+        1. Beginner issues: Issues suitable for newcomers to the project
+        2. Intermediate issues: Issues requiring moderate familiarity with the project
+        3. Advanced issues: Issues requiring deep understanding of the project
+
+        For each category, select up to 3 of the most relevant issues and return their indices from the original list.
+
+        Format the response as JSON with keys: 'beginner_issues', 'intermediate_issues', 'advanced_issues'
+        Each key should contain an array of integers representing the indices of the selected issues in the original list.
+        """
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": list[SelectIssuesResponse],
+                },
+            )
+
+            if response and response.candidates:
+                # Extract the parsed response
+                return json.loads(response.text)[0]
+
+            return {
+                "beginner_issues": [],
+                "intermediate_issues": [],
+                "advanced_issues": []
+            }
+
+        except Exception as e:
+            print(f"Error selecting issues: {e}")
+            return {
+                "beginner_issues": [],
+                "intermediate_issues": [],
+                "advanced_issues": []
             }
 
     def get_installation_instructions(self, readme: str) -> str:

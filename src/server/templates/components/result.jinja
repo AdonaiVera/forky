@@ -16,12 +16,16 @@
 
         // Show selected tab content
         const selectedContent = document.querySelector(`[data-tab-content="${tabName}"]`);
-        selectedContent.classList.remove('hidden');
+        if (selectedContent) {
+            selectedContent.classList.remove('hidden');
+        }
 
         // Set active state on selected tab
         const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
-        selectedTab.classList.remove('bg-[#FFF6E9]');
-        selectedTab.classList.add('bg-[#4ECDC4]', 'shadow-[2px_2px_0px_rgba(0,0,0,1)]', '-translate-y-0.5');
+        if (selectedTab) {
+            selectedTab.classList.remove('bg-[#FFF6E9]');
+            selectedTab.classList.add('bg-[#4ECDC4]', 'shadow-[2px_2px_0px_rgba(0,0,0,1)]', '-translate-y-0.5');
+        }
     }
 
     // Initialize with Overview tab active
@@ -68,7 +72,7 @@
                 <!-- Overview Tab -->
                 <div data-tab-content="overview">{% include 'components/tabs/overview.jinja' %}</div>
                 <!-- Issues Tab -->
-                <div data-tab-content="Let's contribute" class="hidden">{% include 'components/tabs/issues.jinja' %}</div>
+                <div data-tab-content="issues" class="hidden">{% include 'components/tabs/issues.jinja' %}</div>
                 <!-- Chat Tab -->
                 <div data-tab-content="chat" class="hidden">{% include 'components/tabs/chat.jinja' %}</div>
             </div>

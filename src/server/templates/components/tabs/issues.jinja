@@ -1,8 +1,202 @@
-<div class="relative">
-    <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
+{% if result %}
+    <div class="relative">
+        <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
+        </div>
+        <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[#FF6B6B]"
+                     fill="currentColor"
+                     viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                </svg>
+                Issues & Contribution Ideas
+            </h2>
+            <div class="space-y-6">
+                <!-- Beginner Issues -->
+                <div class="relative transition-all duration-200 transform hover:scale-[1.01]">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
+                    </div>
+                    <div class="relative z-10 p-4 bg-white border-[3px] border-gray-900 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-3 text-green-600 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            </svg>
+                            Beginner Friendly
+                        </h3>
+                        <div class="space-y-4">
+                            {% if beginner_issues %}
+                                {% for issue in beginner_issues %}
+                                    <div class="border-b border-gray-200 pb-3">
+                                        <h4 class="font-bold">{{ issue.title }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2">{{ issue.description }}</p>
+                                        <div class="flex flex-wrap gap-1 mb-2">
+                                            {% for label in issue.labels %}
+                                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{{ label }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="flex justify-between text-xs">
+                                            <a href="{{ issue.link }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="text-blue-600 hover:underline">View Issue</a>
+                                            <span class="{% if issue.assigned %}text-orange-500{% else %}text-green-500{% endif %}">
+                                                {{ "Assigned" if issue.assigned else "Available" }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <button onclick="switchTab('chat'); document.getElementById('chat-input').value = 'Help me implement a solution for this issue: {{ issue.title }}. The issue is located at {{ issue.link }}. Please provide a detailed implementation plan with code examples, potential challenges, and best practices to follow.'; document.getElementById('chat-form').dispatchEvent(new Event('submit'));"
+                                                    class="w-full py-2 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg border border-green-300 transition-colors duration-200 text-sm font-medium">
+                                                Discuss in Chat
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-2 text-gray-500">
+                                    <p>No beginner issues available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Intermediate Issues -->
+                <div class="relative transition-all duration-200 transform hover:scale-[1.01]">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
+                    </div>
+                    <div class="relative z-10 p-4 bg-white border-[3px] border-gray-900 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-3 text-yellow-600 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            Intermediate
+                        </h3>
+                        <div class="space-y-4">
+                            {% if intermediate_issues %}
+                                {% for issue in intermediate_issues %}
+                                    <div class="border-b border-gray-200 pb-3">
+                                        <h4 class="font-bold">{{ issue.title }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2">{{ issue.description }}</p>
+                                        <div class="flex flex-wrap gap-1 mb-2">
+                                            {% for label in issue.labels %}
+                                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">{{ label }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="flex justify-between text-xs">
+                                            <a href="{{ issue.link }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="text-blue-600 hover:underline">View Issue</a>
+                                            <span class="{% if issue.assigned %}text-orange-500{% else %}text-green-500{% endif %}">
+                                                {{ "Assigned" if issue.assigned else "Available" }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <button onclick="switchTab('chat'); document.getElementById('chat-input').value = 'Help me implement a solution for this issue: {{ issue.title }}. The issue is located at {{ issue.link }}. Please provide a detailed implementation plan with code examples, potential challenges, and best practices to follow.'; document.getElementById('chat-form').dispatchEvent(new Event('submit'));"
+                                                    class="w-full py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-lg border border-yellow-300 transition-colors duration-200 text-sm font-medium">
+                                                Discuss in Chat
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-2 text-gray-500">
+                                    <p>No intermediate issues available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Advanced Issues -->
+                <div class="relative transition-all duration-200 transform hover:scale-[1.01]">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
+                    </div>
+                    <div class="relative z-10 p-4 bg-white border-[3px] border-gray-900 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-3 text-red-600 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Advanced
+                        </h3>
+                        <div class="space-y-4">
+                            {% if advanced_issues %}
+                                {% for issue in advanced_issues %}
+                                    <div class="border-b border-gray-200 pb-3">
+                                        <h4 class="font-bold">{{ issue.title }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2">{{ issue.description }}</p>
+                                        <div class="flex flex-wrap gap-1 mb-2">
+                                            {% for label in issue.labels %}
+                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">{{ label }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="flex justify-between text-xs">
+                                            <a href="{{ issue.link }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="text-blue-600 hover:underline">View Issue</a>
+                                            <span class="{% if issue.assigned %}text-orange-500{% else %}text-green-500{% endif %}">
+                                                {{ "Assigned" if issue.assigned else "Available" }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <button onclick="switchTab('chat'); document.getElementById('chat-input').value = 'Help me implement a solution for this issue: {{ issue.title }}. The issue is located at {{ issue.link }}. Please provide a detailed implementation plan with code examples, potential challenges, and best practices to follow.'; document.getElementById('chat-form').dispatchEvent(new Event('submit'));"
+                                                    class="w-full py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg border border-red-300 transition-colors duration-200 text-sm font-medium">
+                                                Discuss in Chat
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-2 text-gray-500">
+                                    <p>No advanced issues available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Crazy Ideas -->
+                <div class="relative transition-all duration-200 transform hover:scale-[1.01]">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] rounded-lg translate-y-1 translate-x-1 opacity-70">
+                    </div>
+                    <div class="relative z-10 p-4 bg-white border-[3px] border-gray-900 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
+                            </svg>
+                            Crazy Ideas
+                        </h3>
+                        <div class="space-y-4">
+                            {% if crazy_ideas %}
+                                <div class="border-b border-gray-200 pb-3">
+                                    <p class="text-sm text-gray-800">{{ crazy_ideas }}</p>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-2 text-gray-500">
+                                    <p>No crazy ideas available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="switchTab('chat'); document.getElementById('chat-input').value = 'Help me implement a solution for this crazy idea: ' + '{{ crazy_ideas|replace('"', '\\"') |replace('\n', ' ')|safe }}'; document.getElementById('chat-form').dispatchEvent(new Event('submit'));"
+                                    class="w-full py-2 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg border border-purple-300 transition-colors duration-200 text-sm font-medium">
+                                Discuss This Idea
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if not beginner_issues and not intermediate_issues and not advanced_issues %}
+                <div class="text-center py-8 text-gray-600">
+                    <p class="mb-4">No issues available for this repository yet.</p>
+                    <button class="px-4 py-2 bg-[#4ECDC4] hover:bg-[#4ECDC4]/80 text-gray-900 rounded-lg border-2 border-gray-900 transition-colors duration-200 font-medium">
+                        Refresh Issues
+                    </button>
+                </div>
+            {% endif %}
+        </div>
     </div>
-    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 shadow-xl">
-        <h2 class="text-2xl font-bold mb-6">Issues & Pull Requests</h2>
-        <p class="text-gray-600">Coming soon...</p>
+{% else %}
+    <div class="text-center py-8 text-gray-600">
+        <p class="mb-4">No repository data available. Please load a repository first.</p>
     </div>
-</div>
+{% endif %}

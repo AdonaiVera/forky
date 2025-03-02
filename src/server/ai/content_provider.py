@@ -1,6 +1,7 @@
 import base64
 import os
 import re
+from datetime import datetime, timedelta
 
 import requests
 from pyvis.network import Network
@@ -200,30 +201,6 @@ def get_general_overview_diagram(url, tree) -> str:
         return os.path.join(diagrams_dir, f"repo_diagram.html")
 
 
-def get_contribution_guidelines() -> str:
-    """
-    Provide standard contribution guidelines.
-
-    Returns
-    -------
-    str
-        Text describing how to contribute to the project
-    """
-    return "To contribute, please fork the repository and submit a pull request with your changes."
-
-
-def get_community_support() -> str:
-    """
-    Provide information about community support channels.
-
-    Returns
-    -------
-    str
-        Text describing community support options
-    """
-    return "Join our community on Discord and follow us on Twitter for updates and support."
-
-
 def get_project_metrics(repo_data: dict) -> dict:
     """
     Extract key metrics from a GitHub repository's data.
@@ -259,3 +236,100 @@ def get_project_metrics(repo_data: dict) -> dict:
         "license": repo_data.get("license", {}).get("name", "No license"),
     }
     return project_metrics
+
+
+def get_repository_issues(repo_data: dict, content: str) -> dict:
+    """
+    Fetch and categorize issues from a GitHub repository.
+
+    This function retrieves issues from a GitHub repository and categorizes them
+    into beginner, intermediate, and advanced difficulty levels based on labels.
+    It also generates some "crazy ideas" for potential contributions.
+
+    Parameters
+    ----------
+    repo_data : dict
+        Dictionary containing repository data from the GitHub API
+
+    Returns
+    -------
+    dict
+        Dictionary containing categorized issues and ideas:
+        - beginner_issues: List of issues suitable for beginners
+        - intermediate_issues: List of issues of moderate difficulty
+        - advanced_issues: List of challenging issues
+        - crazy_ideas: List of creative contribution ideas
+    """
+    try:
+        issues_url = repo_data.get("issues_url", "").replace("{/number}", "")
+        issues_response = requests.get(f"{issues_url}?state=open")
+
+        if issues_response.status_code != 200:
+            return {
+                "beginner_issues": [],
+                "intermediate_issues": [],
+                "advanced_issues": [],
+                "crazy_ideas": []
+            }
+
+        # Get all issues and filter to only include those from the last 3 months
+        all_issues = issues_response.json()
+
+        # Calculate the date 3 months ago from now
+        one_year_ago = datetime.now() - timedelta(days=365)
+
+        # Filter issues to only include those created or updated in the last 3 months
+        issues = [
+            issue for issue in all_issues
+            if (datetime.strptime(issue.get("created_at", ""), "%Y-%m-%dT%H:%M:%SZ") > one_year_ago or
+                datetime.strptime(issue.get("updated_at", ""), "%Y-%m-%dT%H:%M:%SZ") > one_year_ago)
+        ]
+
+        # Get repository name
+        repo_name = repo_data.get("name", "")
+
+        # Prepare issues data for the prompt
+        issues_data = []
+        for issue in issues:
+            # Skip pull requests
+            if "pull_request" in issue:
+                continue
+
+            labels = [label["name"] for label in issue.get("labels", [])]
+
+            # Extract relevant information
+            issue_info = {
+                "title": issue.get("title", ""),
+                "description": issue.get("body", "")[:200] if issue.get("body") else "",
+                "labels": labels,
+                "link": issue.get("html_url", ""),
+                "assigned": issue.get("assignee") is not None
+            }
+            issues_data.append(issue_info)
+
+        # Use the select_issues method to categorize issues
+        categorized_issues = gemini_client.select_issues(issues_data, repo_name, content)
+
+        # Extract issues based on categorization
+        beginner_issues = [issues_data[idx] for idx in categorized_issues["beginner_issues"] if idx < len(issues_data)]
+        intermediate_issues = [issues_data[idx] for idx in categorized_issues["intermediate_issues"] if idx < len(issues_data)]
+        advanced_issues = [issues_data[idx] for idx in categorized_issues["advanced_issues"] if idx < len(issues_data)]
+
+        # Generate a crazy idea
+        crazy_idea = gemini_client.generate_crazy_idea(repo_name, content)
+
+        # Limit to a reasonable number for display
+        return {
+            "beginner_issues": beginner_issues[:5],
+            "intermediate_issues": intermediate_issues[:5],
+            "advanced_issues": advanced_issues[:5],
+            "crazy_ideas": crazy_idea
+        }
+    except Exception as e:
+        print(f"Error retrieving repository issues: {e}")
+        return {
+            "beginner_issues": [],
+            "intermediate_issues": [],
+            "advanced_issues": [],
+            "crazy_ideas": "Unable to generate ideas at this time."
+        }
