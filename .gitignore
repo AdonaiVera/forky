@@ -173,3 +173,6 @@ Caddyfile
 
 # ignore default output directory
 tmp/*
+
+# Ignore diagrams
+src/diagrams/*
