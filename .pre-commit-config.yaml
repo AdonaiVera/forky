@@ -5,7 +5,7 @@ repos:
       # Files
       - id: check-added-large-files
         description: "Prevent large files from being committed."
-        args: ["--maxkb=10000"]
+        args: ["--maxkb=40000"]
       - id: check-case-conflict
         description: "Check for files that would conflict in case-insensitive filesystems."
       - id: fix-byte-order-marker

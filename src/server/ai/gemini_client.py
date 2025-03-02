@@ -28,6 +28,7 @@ class GeminiClient:
 
         self.client = genai.Client(api_key=api_key)
 
+
     def analyze_repository(
         self, tree_structure: str, repo_description: str
     ) -> dict[str, Any]:
