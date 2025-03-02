@@ -52,12 +52,12 @@
                                   class="w-full p-4 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none shadow-inner"
                                   rows="3"
                                   placeholder="Ask me anything about the code..."></textarea>
-                        <button type="button"
-                                onclick="sendMessage()"
-                                class="absolute bottom-3 right-3 p-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] border-2 border-gray-900 text-gray-900 rounded-lg hover:-translate-y-px hover:-translate-x-px transition-transform">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        <button onclick="sendMessage('directory-structure')"
+                                class="px-4 py-2 bg-[#ffc480] border-[3px] border-gray-900 text-gray-900 rounded group-hover:-translate-y-px group-hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
+                            Send
                         </button>
                     </form>
                 </div>
