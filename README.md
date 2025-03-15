@@ -47,6 +47,7 @@ python -m uvicorn server.main:app --reload
 
 ## 🏗️ Code Structure
 
+```bash
 forky/
 ├── src/
 │   ├── server/
@@ -62,6 +63,7 @@ forky/
 ├── tests/                  # Test suite
 ├── docs/                   # Documentation
 └── docker/                 # Docker configuration
+```
 
 ## 🛠️ Stack
 
