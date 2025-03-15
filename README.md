@@ -1,4 +1,3 @@
-
 # Forky: Your AI code Companion
 
 🌟 Powered by Google Cloud credits through the #VertexAISprint program and developed in the RevolutionUC Hackathon! ✨
@@ -20,26 +19,71 @@ pip install -r requirements.txt
 ## Run in Local
 
 ```bash
-cd src
+cd src/
 python -m uvicorn server.main:app --reload
 ```
 
 ## 🚀 Features
 
-- Pending to write
+### Current Features
+
+- **Repository Analysis**: Deep dive into any GitHub repository with AI-powered insights
+- **Code Understanding**: Get instant explanations of code segments and architecture
+- **Pull Request Assistant**:
+  - Automated PR reviews and suggestions
+  - Code quality checks
+  - Best practices recommendations
+- **Interactive Q&A**: Ask questions about any part of the codebase
+- **Visualization Tools**: Visual representation of code dependencies and repository structure
+- **Contribution Difficulty Scoring**: Classify in easy, medium, and hard PR.
+- **Real-time Suggestions**: Get contextual suggestions while browsing code
+- **Multi-language Support**: Works with various programming languages and frameworks
+
+### 🔮 Future Features
+
+- **Repository Matchmaking**: AI-powered suggestions for repositories that match your skills and interests
+- **Learning Path Generation**: Personalized learning recommendations based on repository requirements
+- **Team Collaboration Tools**: Enhanced features for team-based contributions
+
+## 🏗️ Code Structure
+
+forky/
+├── src/
+│   ├── server/
+│   │   ├── ai/              # AI/ML models and clients
+│   │   ├── routers/         # FastAPI route handlers
+│   │   ├── templates/       # Jinja2 HTML templates
+│   │   ├── main.py         # FastAPI application entry point
+│   │   ├── query_processor.py # Query processing logic
+│   │   └── server_utils.py  # Utility functions
+│   └── static/
+│       ├── css/            # Tailwind CSS styles
+│       └── js/             # Frontend JavaScript
+├── tests/                  # Test suite
+├── docs/                   # Documentation
+└── docker/                 # Docker configuration
+
+## 🛠️ Stack
+
+- [Tailwind CSS](https://tailwindcss.com) - Frontend
+- [PyViz](https://pyviz.org) - Data visualization
+- [FastAPI](https://github.com/fastapi/fastapi) - Backend framework
+- [Jinja2](https://jinja.palletsprojects.com) - HTML templating
+- [posthog](https://github.com/PostHog/posthog) - Amazing analytics
+- [gitingest](https://github.com/cyclotruc/gitingest) - Git repository analysis
+- [Gemini 2.0](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) - AI model
 
 ## 🌐 Self-host
 
 1. Build the image:
 
-   ``` bash
+   ```bash
    docker build -t forky .
-
    ```
 
 2. Run the container:
 
-   ``` bash
+   ```bash
    docker run -d --name forky -p 8000:8000 forky
 
    # For local development
@@ -55,12 +99,10 @@ If you are hosting it on a domain, you can specify the allowed hostnames via env
    ALLOWED_HOSTS="example.com, localhost, 127.0.0.1"
    ```
 
-## 🛠️ Stack
+## 🤝 Contributing
 
-- [Tailwind CSS](https://tailwindcss.com) - Frontend
-- [PyViz](https://pyviz.org) - Data visualization
-- [FastAPI](https://github.com/fastapi/fastapi) - Backend framework
-- [Jinja2](https://jinja.palletsprojects.com) - HTML templating
-- [posthog](https://github.com/PostHog/posthog) - Amazing analytics
-- [gitingest](https://github.com/cyclotruc/gitingest) - Git repository analysis
-- [Gemini 2.0](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) - AI model
+We welcome contributions!
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
