@@ -114,7 +114,11 @@ async def chat(
             session_id
         )
 
-        return JSONResponse(content={"response": str(response_text)})
+        # Return response with a flag indicating it contains markdown
+        return JSONResponse(content={
+            "response": str(response_text),
+            "format": "markdown"  # Indicate this contains markdown formatting
+        })
     except Exception as e:
         return JSONResponse(
             content={"error": str(e)},

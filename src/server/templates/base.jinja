@@ -51,15 +51,21 @@
             }
         </script>
         <script src="/static/js/utils.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>
             // Global chat functions
-            function addMessageToChat(role, content) {
+            function addMessageToChat(role, content, format = null) {
                 const messagesContainer = document.getElementById('chat-messages');
                 if (!messagesContainer) return;
 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'animate-fade-in';
                 const timestamp = new Date().toLocaleTimeString();
+
+                // Format the content if it's markdown
+                const formattedContent = format === 'markdown'
+                    ? marked.parse(content)  // Use marked.js to parse markdown
+                    : `<p class="text-sm text-gray-900">${content}</p>`;
 
                 if (role === 'user') {
                     messageDiv.innerHTML = `
@@ -73,7 +79,7 @@
                                     <span class="text-sm text-gray-500">${timestamp}</span>
                                 </div>
                                 <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-gray-100 rounded-s-xl rounded-ee-xl">
-                                    <p class="text-sm text-gray-900">${content}</p>
+                                    ${formattedContent}
                                 </div>
                             </div>
                         </div>
@@ -84,13 +90,15 @@
                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold">
                                 AI
                             </div>
-                            <div class="flex flex-col gap-1 w-full max-w-[320px]">
+                            <div class="flex flex-col gap-1 w-full max-w-[80%]">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm font-semibold text-gray-900">AI Assistant</span>
+                                    <span class="text-sm font-semibold text-gray-900">Forky</span>
                                     <span class="text-sm text-gray-500">${timestamp}</span>
                                 </div>
-                                <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl">
-                                    <p class="text-sm text-gray-900">${content}</p>
+                                <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl overflow-hidden">
+                                    <div class="prose prose-sm max-w-full overflow-x-auto">
+                                        ${formattedContent}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +144,7 @@
                 })
                 .then(data => {
                     if (data.error) throw new Error(data.error);
-                    addMessageToChat('assistant', data.response);
+                    addMessageToChat('assistant', data.response, data.format);
                 })
                 .catch(error => {
                     console.error('Error:', error);
