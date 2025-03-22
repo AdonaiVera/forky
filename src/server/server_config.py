@@ -10,7 +10,7 @@ EXAMPLE_REPOS: list[dict[str, str]] = [
     {"name": "Supervision", "url": "https://github.com/roboflow/supervision"},
     {"name": "FiftyOne", "url": "https://github.com/voxel51/fiftyone"},
     {"name": "Keras", "url": "https://github.com/keras-team/keras"},
-    {"name": "TensorFlow", "url": "https://github.com/tensorflow/tensorflow"},
+    {"name": "Smol Models", "url": "https://github.com/huggingface/smollm"},
     {"name": "VisionAgent", "url": " https://github.com/landing-ai/vision-agent"},
 
 
