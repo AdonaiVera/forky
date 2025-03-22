@@ -8,74 +8,121 @@ Forky helps open-source contributors navigate repos, understand code, and improv
 
 🚀 [Try it out!](https://forky-364607428894.us-central1.run.app/)
 
-## 📦 Installation
+## 📦 Prerequisites
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+- Python 3.8 or higher
+- pip package manager
+- Virtual environment (recommended)
+- Google Cloud credentials (for Gemini AI features)
 
-## Run in Local
+## 🛠️ Installation & Setup
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/forky.git
+   cd forky
+   ```
+
+2. Set up virtual environment:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Environment configuration:
+   - Copy `.env.example` to `.env`
+   - Add your Google Cloud credentials and other required environment variables
+
+## 🚀 Running the Application
+
+### Local Development
 
 ```bash
 cd src/
 python -m uvicorn server.main:app --reload
 ```
 
-## 🚀 Features
+The application will be available at `http://localhost:8000`
 
-### Current Features
-
-- **Repository Analysis**: Deep dive into any GitHub repository with AI-powered insights
-- **Code Understanding**: Get instant explanations of code segments and architecture
-- **Pull Request Assistant**:
-  - Automated PR reviews and suggestions
-  - Code quality checks
-  - Best practices recommendations
-- **Interactive Q&A**: Ask questions about any part of the codebase
-- **Visualization Tools**: Visual representation of code dependencies and repository structure
-- **Contribution Difficulty Scoring**: Classify in easy, medium, and hard PR.
-- **Real-time Suggestions**: Get contextual suggestions while browsing code
-- **Multi-language Support**: Works with various programming languages and frameworks
-
-### 🔮 Future Features
-
-- **Repository Matchmaking**: AI-powered suggestions for repositories that match your skills and interests
-- **Learning Path Generation**: Personalized learning recommendations based on repository requirements
-- **Team Collaboration Tools**: Enhanced features for team-based contributions
-
-## 🏗️ Code Structure
+### Production Deployment
 
 ```bash
-forky/
-├── src/
-│   ├── server/
-│   │   ├── ai/              # AI/ML models and clients
-│   │   ├── routers/         # FastAPI route handlers
-│   │   ├── templates/       # Jinja2 HTML templates
-│   │   ├── main.py         # FastAPI application entry point
-│   │   ├── query_processor.py # Query processing logic
-│   │   └── server_utils.py  # Utility functions
-│   └── static/
-│       ├── css/            # Tailwind CSS styles
-│       └── js/             # Frontend JavaScript
-├── tests/                  # Test suite
-├── docs/                   # Documentation
-└── docker/                 # Docker configuration
+cd src/
+python -m uvicorn server.main:app --host 0.0.0.0 --port 8000
 ```
 
-## 🛠️ Stack
+## 🎯 Core Features
 
-- [Tailwind CSS](https://tailwindcss.com) - Frontend
-- [PyViz](https://pyviz.org) - Data visualization
-- [FastAPI](https://github.com/fastapi/fastapi) - Backend framework
-- [Jinja2](https://jinja.palletsprojects.com) - HTML templating
-- [posthog](https://github.com/PostHog/posthog) - Amazing analytics
-- [gitingest](https://github.com/cyclotruc/gitingest) - Git repository analysis
-- [Gemini 2.0](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) - AI model
+### Repository Analysis
 
-## 🌐 Self-host
+- **Code Understanding**: AI-powered code explanation and architecture insights
+- **Dependency Visualization**: Interactive visualization of code dependencies
+- **Repository Structure Analysis**: Clear breakdown of codebase organization
+
+### Pull Request Assistant
+
+- **Automated Reviews**: AI-driven code review suggestions
+- **Quality Checks**: Automated code quality assessment
+- **Best Practices**: Contextual recommendations for improvements
+- **Difficulty Scoring**: PR classification (Easy/Medium/Hard)
+
+### Interactive Features
+
+- **Natural Language Q&A**: Ask questions about any code segment
+- **Real-time Suggestions**: Context-aware coding recommendations
+- **Multi-language Support**: Works across different programming languages
+
+## 🏗️ Project Structure
+
+```plaintext
+forky/
+├── src/                    # Main source code
+│   ├── server/            # Backend server implementation
+│   │   ├── ai/           # AI/ML models and Gemini integration
+│   │   ├── routers/      # FastAPI route handlers
+│   │   ├── templates/    # Jinja2 HTML templates
+│   │   ├── main.py      # Application entry point
+│   │   └── server_utils.py # Utility functions
+│   ├── static/           # Static assets
+│   │   ├── css/         # Tailwind CSS styles
+│   │   └── js/          # Frontend JavaScript
+│   ├── diagrams/        # Visualization components
+│   └── config.py        # Configuration settings
+├── docs/                 # Documentation
+├── tests/               # Test suite
+└── docker/              # Docker configuration
+```
+
+## 🛠️ Technology Stack
+
+### Backend
+
+- **FastAPI**: High-performance web framework
+- **Gemini 2.0**: Google's advanced AI model
+- **PyViz**: Data visualization library
+- **gitingest**: Git repository analysis tool
+
+### Frontend
+
+- **Tailwind CSS**: Utility-first CSS framework
+- **Jinja2**: Template engine
+- **JavaScript**: Interactive features
+
+### DevOps & Tools
+
+- **Docker**: Containerization
+- **uvicorn**: ASGI server
+- **PostHog**: Analytics platform
+
+## 🐳 Docker Deployment
 
 1. Build the image:
 
@@ -86,25 +133,35 @@ forky/
 2. Run the container:
 
    ```bash
-   docker run -d --name forky -p 8000:8000 forky
-
-   # For local development
+   # Development
    docker run --env-file .env -d --name forky -p 8000:8000 forky
+
+   # Production
+   docker run -d --name forky -p 8000:8000 forky
    ```
 
-The application will be available at `http://localhost:8000`.
+## 🔧 Configuration
 
-If you are hosting it on a domain, you can specify the allowed hostnames via env variable `ALLOWED_HOSTS`.
+### Environment Variables
+
+- `GOOGLE_API_KEY`: Your Google Cloud API key
+- `ALLOWED_HOSTS`: Comma-separated list of allowed hosts
 
    ```bash
-   # Default: "forky.com, *.forky.com, localhost, 127.0.0.1".
-   ALLOWED_HOSTS="example.com, localhost, 127.0.0.1"
+   # Default: "forky.com,*.forky.com,localhost,127.0.0.1"
+   ALLOWED_HOSTS="example.com,localhost,127.0.0.1"
    ```
 
 ## 🤝 Contributing
 
-We welcome contributions!
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Google Cloud for providing credits through #VertexAISprint
+- RevolutionUC Hackathon for the platform
+- All our contributors and supporters
