@@ -35,6 +35,9 @@
 </script>
 {% if result %}
     <div class="mt-10" data-results>
+        <!-- Hidden repository context -->
+        <div class="hidden" data-summary>{{ summary }}</div>
+        <div class="hidden" data-content>{{ content }}</div>
         <!-- Tab Navigation -->
         <div class="flex gap-4 mb-8">
             <button data-tab="overview"

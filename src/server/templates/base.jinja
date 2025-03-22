@@ -114,6 +114,13 @@
                 const formData = new FormData();
                 formData.append('message', message);
 
+                // Add repository context - using the direct summary and content from the analysis
+                const summary = document.querySelector('[data-summary]')?.textContent;
+                const content = document.querySelector('[data-content]')?.textContent;
+
+                if (summary) formData.append('repo_summary', summary);
+                if (content) formData.append('repo_content', content);
+
                 // Clear input
                 input.value = '';
 

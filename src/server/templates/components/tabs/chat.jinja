@@ -3,41 +3,44 @@
     <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
     </div>
     <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 shadow-xl">
-        <div class="flex flex-col h-[800px]">
-            <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col h-[600px]">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-gray-900/10">
                 <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#FF6B6B]"
-                         fill="currentColor"
-                         viewBox="0 0 20 20">
-                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                        <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
-                    </svg>
+                    <div class="p-2 bg-[#FF6B6B]/10 rounded-lg">
+                        <svg class="w-6 h-6 text-[#FF6B6B]"
+                             fill="currentColor"
+                             viewBox="0 0 20 20">
+                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+                        </svg>
+                    </div>
                     AI Assistant
                 </h3>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ECDC4] opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-[#4ECDC4]"></span>
                     </span>
-                    <span class="text-sm text-gray-600">Online</span>
+                    <span class="text-sm font-medium text-gray-600">Online</span>
                 </div>
             </div>
             <!-- Chat Messages Container -->
-            <div class="flex-1 overflow-y-auto mb-4 space-y-4 pr-4 -mr-4"
+            <div class="flex-1 overflow-y-auto mb-6 space-y-6 pr-4 -mr-4 custom-scrollbar"
                  id="chat-messages">
                 <!-- Welcome message -->
-                <div class="flex items-start gap-2.5 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold">
+                <div class="flex items-start gap-3 animate-fade-in">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] flex items-center justify-center text-white font-bold shadow-lg">
                         AI
                     </div>
-                    <div class="flex flex-col gap-1 w-full max-w-[320px]">
-                        <div class="flex items-center space-x-2">
+                    <div class="flex flex-col gap-1 w-full max-w-[80%]">
+                        <div class="flex items-center gap-2">
                             <span class="text-sm font-semibold text-gray-900">AI Assistant</span>
-                            <span class="text-sm text-gray-500">Just now</span>
+                            <span class="text-xs text-gray-500">Just now</span>
                         </div>
-                        <div class="flex flex-col leading-1.5 p-4 border-[2px] border-gray-900 bg-[#4ECDC4]/10 rounded-e-xl rounded-es-xl">
+                        <div class="flex flex-col leading-relaxed p-4 border-2 border-gray-900 bg-[#4ECDC4]/10 rounded-lg shadow-md">
                             <p class="text-sm text-gray-900">
-                                Hi! I'm here to help you understand the code better. Feel free to ask any questions!
+                                Hi! 👋 I'm your AI assistant, ready to help you understand and work with the code. Feel free to ask me anything about the repository, implementation details, or best practices!
                             </p>
                         </div>
                     </div>
@@ -50,20 +53,49 @@
                 <div class="relative z-10">
                     <div class="relative" id="chat-form">
                         <textarea id="chat-input"
-                                  class="w-full p-4 bg-[#FFF6E9] border-[3px] border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none shadow-inner"
-                                  rows="3"
-                                  placeholder="Ask me anything about the code..."></textarea>
-                        <button type="button"
-                                onclick="sendChatMessage()"
-                                class="px-4 py-2 bg-[#ffc480] border-[3px] border-gray-900 text-gray-900 rounded hover:-translate-y-px hover:-translate-x-px transition-transform relative z-10 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                            </svg>
-                            Send
-                        </button>
+                                  class="w-full p-4 bg-[#FFF6E9] border-3 border-gray-900 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#4ECDC4] focus:border-[#4ECDC4] transition-all duration-200 shadow-inner min-h-[100px]"
+                                  placeholder="Ask me anything about the code..."
+                                  rows="3"></textarea>
+                        <div class="absolute bottom-4 right-4 flex items-center gap-2">
+                            <button type="button"
+                                    onclick="sendChatMessage()"
+                                    class="px-4 py-2 bg-[#4ECDC4] border-2 border-gray-900 text-gray-900 rounded-lg hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all duration-200 flex items-center gap-2 font-medium shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                Send
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
+    }
+
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
+    }
+</style>

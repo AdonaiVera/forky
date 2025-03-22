@@ -70,7 +70,6 @@ async def process_query(
     _TemplateResponse
         Rendered template response containing the processed results or an error message.
     """
-    print("jiji")
     # Extract owner and repo from input_text
     owner, repo = input_text.split("/")[-2], input_text.split("/")[-1]
     url = f"https://api.github.com/repos/{owner}/{repo}"

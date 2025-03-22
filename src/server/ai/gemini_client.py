@@ -244,23 +244,59 @@ class GeminiClient:
             print(f"Error getting installation instructions: {e}")
             return "# Error retrieving installation instructions"
 
-    async def chat(self, message: str) -> str:
+    async def chat(self, message: str, summary: str = "", content: str = "") -> str:
         """
-        Process a chat message and return a simple acknowledgment.
+        Process a chat message and generate a response using Gemini.
 
         Parameters
         ----------
         message : str
             The message received from the user
+        summary : str
+            Summary of the repository
+        content : str
+            Content/context from the repository
 
         Returns
         -------
         str
-            A simple acknowledgment message
+            AI-generated response based on the context
         """
         try:
-            # For now, just echo back the message
-            return f"You said: {message}"
+            # Create a prompt that includes repository context
+            prompt = f"""
+            You are a friendly and helpful AI assistant chatting with a user about a code repository.
+
+            Repository context:
+            Summary: {summary}
+            Content: {content[:10000]}
+
+            The user says: "{message}"
+
+            Respond in a conversational, friendly tone while:
+            - Addressing their question or comment directly
+            - Drawing from the repository context when relevant
+            - Using specific code examples or references where helpful
+            - Being encouraging and supportive
+            - Using natural language and occasional emojis
+            - Keeping responses concise but informative
+
+            Remember to maintain a helpful and engaging conversation.
+            """
+
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "text/plain",
+                },
+            )
+
+            if response and response.text:
+                return response.text.strip()
+
+            return "I'm having trouble understanding that. Could you rephrase your question? 🤔"
+
         except Exception as e:
             print(f"Error in chat: {e}")
-            return "Sorry, there was an error processing your message."
+            return "Oops! Something went wrong on my end. Let's try that again! 😅"

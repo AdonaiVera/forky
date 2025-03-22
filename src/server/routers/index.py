@@ -90,6 +90,8 @@ async def index_post(
 async def chat(
     request: Request,
     message: str = Form(...),
+    repo_summary: str = Form(None),
+    repo_content: str = Form(None),
 ) -> JSONResponse:
     """
     Handle chat messages and return AI responses.
@@ -100,6 +102,10 @@ async def chat(
         The incoming request object
     message : str
         The chat message from the user
+    repo_summary : str, optional
+        The repository summary for context
+    repo_content : str, optional
+        The repository content for context
 
     Returns
     -------
@@ -107,9 +113,8 @@ async def chat(
         The AI response to the chat message
     """
     try:
-        # Use gemini_client directly for chat
-        response = await gemini_client.chat(message)
-
+        # Use gemini_client for chat with repository context
+        response = await gemini_client.chat(message, repo_summary, repo_content)
 
         return JSONResponse(content={"response": str(response)})
     except Exception as e:
