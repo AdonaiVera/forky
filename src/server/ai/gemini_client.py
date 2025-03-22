@@ -27,6 +27,7 @@ class GeminiClient:
             raise ValueError("GEMINI_API_KEY environment variable is not set")
 
         self.client = genai.Client(api_key=api_key)
+        self.chat_histories = {}  # Store chat histories by session ID
 
 
     def analyze_repository(
@@ -244,7 +245,7 @@ class GeminiClient:
             print(f"Error getting installation instructions: {e}")
             return "# Error retrieving installation instructions"
 
-    async def chat(self, message: str, summary: str = "", content: str = "") -> str:
+    async def chat(self, message: str, summary: str = "", content: str = "", session_id: str = None) -> str:
         """
         Process a chat message and generate a response using Gemini.
 
@@ -256,6 +257,8 @@ class GeminiClient:
             Summary of the repository
         content : str
             Content/context from the repository
+        session_id : str
+            Unique identifier for the chat session
 
         Returns
         -------
@@ -263,13 +266,31 @@ class GeminiClient:
             AI-generated response based on the context
         """
         try:
-            # Create a prompt that includes repository context
+            # Initialize or get existing chat history
+            if session_id not in self.chat_histories:
+                self.chat_histories[session_id] = []
+
+            # Add user message to history
+            self.chat_histories[session_id].append({
+                "role": "user",
+                "content": message
+            })
+
+            # Create a prompt that includes repository context and chat history
+            history_text = "\n".join([
+                f"{msg['role']}: {msg['content']}"
+                for msg in self.chat_histories[session_id][-5:]  # Include last 5 messages
+            ])
+
             prompt = f"""
             You are a friendly and helpful AI assistant chatting with a user about a code repository.
 
             Repository context:
             Summary: {summary}
-            Content: {content[:10000]}
+            Content: {content}
+
+            Chat history:
+            {history_text}
 
             The user says: "{message}"
 
@@ -293,7 +314,13 @@ class GeminiClient:
             )
 
             if response and response.text:
-                return response.text.strip()
+                response_text = response.text.strip()
+                # Add assistant response to history
+                self.chat_histories[session_id].append({
+                    "role": "assistant",
+                    "content": response_text
+                })
+                return response_text
 
             return "I'm having trouble understanding that. Could you rephrase your question? 🤔"
 

@@ -1,6 +1,8 @@
 """ This module defines the FastAPI router for the home page of the application. """
 
-from fastapi import APIRouter, Body, Form, Request
+import uuid
+
+from fastapi import APIRouter, Body, Cookie, Form, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 
 from server.ai.content_provider import gemini_client
@@ -89,34 +91,30 @@ async def index_post(
 @limiter.limit("10/minute")
 async def chat(
     request: Request,
+    response: Response,
     message: str = Form(...),
     repo_summary: str = Form(None),
     repo_content: str = Form(None),
+    session_id: str = Cookie(None)
 ) -> JSONResponse:
     """
     Handle chat messages and return AI responses.
-
-    Parameters
-    ----------
-    request : Request
-        The incoming request object
-    message : str
-        The chat message from the user
-    repo_summary : str, optional
-        The repository summary for context
-    repo_content : str, optional
-        The repository content for context
-
-    Returns
-    -------
-    JSONResponse
-        The AI response to the chat message
     """
     try:
-        # Use gemini_client for chat with repository context
-        response = await gemini_client.chat(message, repo_summary, repo_content)
+        # Generate session ID if not exists
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            response.set_cookie(key="session_id", value=session_id)
 
-        return JSONResponse(content={"response": str(response)})
+        # Use gemini_client for chat with repository context
+        response_text = await gemini_client.chat(
+            message,
+            repo_summary,
+            repo_content,
+            session_id
+        )
+
+        return JSONResponse(content={"response": str(response_text)})
     except Exception as e:
         return JSONResponse(
             content={"error": str(e)},

@@ -134,10 +134,10 @@ forky/
 
    ```bash
    # Development
-   docker run --env-file .env -d --name forky -p 8000:8000 forky
+   docker run --env-file .env -d --name forky -p 8080:8080 forky
 
    # Production
-   docker run -d --name forky -p 8000:8000 forky
+   docker run -d --name forky -p 8080:8080 forky
    ```
 
 ## 🔧 Configuration

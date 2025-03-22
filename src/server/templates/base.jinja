@@ -58,7 +58,8 @@
                 if (!messagesContainer) return;
 
                 const messageDiv = document.createElement('div');
-                const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                messageDiv.className = 'animate-fade-in';
+                const timestamp = new Date().toLocaleTimeString();
 
                 if (role === 'user') {
                     messageDiv.innerHTML = `
