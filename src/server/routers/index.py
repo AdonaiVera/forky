@@ -1,8 +1,9 @@
 """ This module defines the FastAPI router for the home page of the application. """
 
-from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Body, Form, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 
+from server.ai.content_provider import gemini_client
 from server.query_processor import process_query
 from server.server_config import EXAMPLE_REPOS, templates
 from server.server_utils import limiter
@@ -82,3 +83,37 @@ async def index_post(
         pattern,
         is_index=True,
     )
+
+
+@router.post("/chat", response_class=JSONResponse)
+@limiter.limit("10/minute")
+async def chat(
+    request: Request,
+    message: str = Form(...),
+) -> JSONResponse:
+    """
+    Handle chat messages and return AI responses.
+
+    Parameters
+    ----------
+    request : Request
+        The incoming request object
+    message : str
+        The chat message from the user
+
+    Returns
+    -------
+    JSONResponse
+        The AI response to the chat message
+    """
+    try:
+        # Use gemini_client directly for chat
+        response = await gemini_client.chat(message)
+
+
+        return JSONResponse(content={"response": str(response)})
+    except Exception as e:
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )

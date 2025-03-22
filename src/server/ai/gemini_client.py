@@ -259,7 +259,8 @@ class GeminiClient:
             A simple acknowledgment message
         """
         try:
-            return f"I received: {message}"
+            # For now, just echo back the message
+            return f"You said: {message}"
         except Exception as e:
             print(f"Error in chat: {e}")
             return "Sorry, there was an error processing your message."
