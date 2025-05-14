@@ -160,6 +160,10 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📜 Code of Conduct
+
+Details about our Code of Conduct can be found in the [code of conduct](.github/CODE_OF_CONDUCT.md) file.
+
 ## 🙏 Acknowledgments
 
 - Google Cloud for providing credits through #VertexAISprint
