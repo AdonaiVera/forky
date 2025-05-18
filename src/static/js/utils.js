@@ -44,10 +44,25 @@ function copyText(className) {
 function handleSubmit(event, showLoading = false) {
     event.preventDefault();
     const form = event.target || document.getElementById('ingestForm');
-    if (!form) return;
+    if (!form || form.id !== 'ingestForm') return;
 
     const submitButton = form.querySelector('button[type="submit"]');
     if (!submitButton) return;
+
+    // Validate input
+    const inputField = document.getElementById('input_text');
+    if (!inputField || !inputField.value.trim()) {
+        // Display error message for empty input
+        showErrorMessage("Please enter a repository URL");
+        return;
+    }
+
+    // Basic URL validation
+    const inputValue = inputField.value.trim();
+    if (!inputValue.includes('github.com/') && !inputValue.startsWith('https://') && !inputValue.startsWith('http://')) {
+        showErrorMessage("Please enter a valid GitHub repository URL");
+        return;
+    }
 
     const formData = new FormData(form);
 
@@ -95,30 +110,88 @@ function handleSubmit(event, showLoading = false) {
             // Store the star count before updating the DOM
             const starCount = currentStars;
 
-            // Replace the entire body content with the new HTML
-            document.body.innerHTML = html;
+            // Check if the response contains an error message
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const errorElement = tempDiv.querySelector('#error-message');
 
-            // Wait for next tick to ensure DOM is updated
-            setTimeout(() => {
-                // Reinitialize slider functionality
-                initializeSlider();
+            if (errorElement) {
+                // If there's an error, only update the error message without replacing the whole page
+                const errorMessage = errorElement.dataset.message || errorElement.textContent;
+                showErrorMessage(errorMessage);
 
-                const starsElement = document.getElementById('github-stars');
-                if (starsElement && starCount) {
-                    starsElement.textContent = starCount;
-                }
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalContent;
+                submitButton.classList.remove('bg-[#ffb14d]');
+            } else {
+                // Replace the entire body content with the new HTML if no error
+                document.body.innerHTML = html;
 
-                // Scroll to results if they exist
-                const resultsSection = document.querySelector('[data-results]');
-                if (resultsSection) {
-                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 0);
+                // Wait for next tick to ensure DOM is updated
+                setTimeout(() => {
+                    // Reinitialize slider functionality
+                    initializeSlider();
+
+                    const starsElement = document.getElementById('github-stars');
+                    if (starsElement && starCount) {
+                        starsElement.textContent = starCount;
+                    }
+
+                    // Scroll to results if they exist
+                    const resultsSection = document.querySelector('[data-results]');
+                    if (resultsSection) {
+                        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 0);
+            }
         })
         .catch(error => {
             submitButton.disabled = false;
             submitButton.innerHTML = originalContent;
+            submitButton.classList.remove('bg-[#ffb14d]');
+            showErrorMessage("An error occurred while processing your request. Please try again.");
         });
+}
+
+// Function to show error message
+function showErrorMessage(message) {
+    // Look for existing error message container
+    let errorElement = document.getElementById('error-message');
+
+    if (!errorElement) {
+        // Create a new error message container if it doesn't exist
+        errorElement = document.createElement('div');
+        errorElement.id = 'error-message';
+        errorElement.className = 'mb-6 p-4 bg-forky-red/10 border-4 border-forky-red rounded-xl text-forky-red font-bold';
+        errorElement.setAttribute('data-message', message);
+
+        // Find the git form's container
+        const gitForm = document.getElementById('ingestForm');
+        let gitFormContainer = null;
+
+        if (gitForm) {
+            // Find the parent container - go up two levels from the form
+            gitFormContainer = gitForm.closest('.relative');
+        }
+
+        if (gitFormContainer && gitFormContainer.parentNode) {
+            gitFormContainer.parentNode.insertBefore(errorElement, gitFormContainer);
+        } else {
+            // Fallback - add to the top of the page
+            const mainContent = document.querySelector('main .max-w-5xl');
+            if (mainContent) {
+                mainContent.prepend(errorElement);
+            }
+        }
+    }
+
+    // Update the error message
+    errorElement.textContent = message;
+    errorElement.setAttribute('data-message', message);
+
+    // Scroll to error message
+    errorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function copyFullDigest() {
@@ -188,25 +261,12 @@ document.addEventListener('DOMContentLoaded', initializeSlider);
 
 // Make sure these are available globally
 window.copyText = copyText;
-
 window.handleSubmit = handleSubmit;
 window.initializeSlider = initializeSlider;
 window.formatSize = formatSize;
-
-// Add this new function
-function setupGlobalEnterHandler() {
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' && !event.target.matches('textarea')) {
-            const form = document.getElementById('ingestForm');
-            if (form) {
-                handleSubmit(new Event('submit'), true);
-            }
-        }
-    });
-}
+window.showErrorMessage = showErrorMessage;
 
 // Add to the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
     initializeSlider();
-    setupGlobalEnterHandler();
 });

@@ -210,43 +210,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Diagrams Section -->
-            <div class="lg:col-span-3">
-                <div class="relative">
-                    <div class="w-full h-full absolute inset-0 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B6B] rounded-xl translate-y-2 translate-x-2 opacity-80">
-                    </div>
-                    <div class="bg-[#FFF6E9] rounded-xl border-[3px] border-gray-900 p-8 relative z-20 shadow-xl">
-                        <!-- Diagrams Content -->
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2 mb-6">
-                                <svg class="w-5 h-5 text-[#FF6B6B]"
-                                     fill="currentColor"
-                                     viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                                Repository Structure
-                            </h3>
-                            <div class="relative transform transition-all duration-200 hover:scale-[1.01]">
-                                <div class="w-full h-full rounded-lg bg-gradient-to-r from-[#4ECDC4] to-[#FF6B6B] translate-y-1 translate-x-1 absolute inset-0 opacity-70">
-                                </div>
-                                <div class="w-full p-5 bg-white border-[3px] border-gray-900 rounded-lg relative z-10 shadow-inner">
-                                    <div id="repo-structure-graph" class="w-full h-[400px]">
-                                        {% if general_overview_diagram %}
-                                            <iframe src="/diagrams/{{ general_overview_diagram }}"
-                                                    class="w-full h-full border-0"
-                                                    sandbox="allow-scripts allow-same-origin"
-                                                    onload="this.contentWindow.document.querySelectorAll('script').forEach(script => { if (script.src && script.src.includes('posthog.com')) { script.remove(); } })">
-                                            </iframe>
-                                        {% else %}
-                                            <div class="flex items-center justify-center h-full text-gray-500">No diagram available for this repository</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 {% endif %}

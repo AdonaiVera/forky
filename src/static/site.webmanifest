@@ -1,0 +1,29 @@
+{
+  "name": "Forky - Your AI Code Companion",
+  "short_name": "Forky",
+  "icons": [
+    {
+      "src": "/static/favicon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#FF6B6B",
+  "background_color": "#FFF6E9",
+  "display": "standalone"
+}

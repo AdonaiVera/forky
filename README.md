@@ -20,7 +20,7 @@ Forky helps open-source contributors navigate repos, understand code, and improv
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/forky.git
+   git clone https://github.com/AdonaiVera/forky.git
    cd forky
    ```
 
@@ -66,6 +66,14 @@ python -m uvicorn server.main:app --host 0.0.0.0 --port 8000
 - **Code Understanding**: AI-powered code explanation and architecture insights
 - **Dependency Visualization**: Interactive visualization of code dependencies
 - **Repository Structure Analysis**: Clear breakdown of codebase organization
+
+### Smart Repository Search
+
+- **AI-Powered Search**: Advanced repository search using Google Search grounding
+- **Quality Filtering**: Ensures repositories are active, maintained, and have sufficient content
+- **Relevance Ranking**: Intelligent ranking based on README analysis and query relevance
+- **Temperature Control**: Adjustable creativity levels for search results (0.2-0.8)
+- **Top Results**: Returns the most relevant repositories with detailed match explanations
 
 ### Pull Request Assistant
 

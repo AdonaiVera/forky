@@ -3,6 +3,7 @@ fastapi[standard]
 gitingest
 google-genai
 google-generativeai
+httpx>=0.24.0
 python-dotenv
 pyvis==0.3.2
 slowapi

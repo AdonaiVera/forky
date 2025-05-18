@@ -93,6 +93,7 @@ def get_installation_usage(url: str) -> str:
 def get_general_overview_diagram(url, tree) -> str:
     """
     Generate a general overview diagram in HTML format based on the repository structure.
+    Note: This feature is currently disabled and will be available in a future update.
 
     Parameters
     ----------

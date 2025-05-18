@@ -70,20 +70,10 @@ async def process_query(
     _TemplateResponse
         Rendered template response containing the processed results or an error message.
     """
-    # Extract owner and repo from input_text
-    owner, repo = input_text.split("/")[-2], input_text.split("/")[-1]
-    url = f"https://api.github.com/repos/{owner}/{repo}"
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        repo_data = response.json()
-    else:
-        repo_data = {}
-
     template = "index.jinja" if is_index else "git.jinja"
     template_response = partial(templates.TemplateResponse, name=template)
-    max_file_size = log_slider_to_size(slider_position)
 
+    # Initialize context with basic information
     context = {
         "request": request,
         "repo_url": input_text,
@@ -91,8 +81,43 @@ async def process_query(
         "default_file_size": slider_position,
         "pattern_type": pattern_type,
         "pattern": pattern,
-        "repo_data": repo_data,
     }
+
+    # Validate input
+    if not input_text or input_text.strip() == "":
+        context["error_message"] = "Please enter a repository URL"
+        return template_response(context=context)
+
+    # Validate URL format
+    if not input_text.startswith(("http://", "https://")) or "github.com/" not in input_text:
+        context["error_message"] = "Please enter a valid GitHub repository URL"
+        return template_response(context=context)
+
+    try:
+        # Try to extract owner and repo from input_text
+        parts = input_text.strip("/").split("/")
+        if len(parts) < 5 or parts[-3] != "github.com":
+            context["error_message"] = "Invalid GitHub repository URL format"
+            return template_response(context=context)
+
+        owner, repo = parts[-2], parts[-1]
+        url = f"https://api.github.com/repos/{owner}/{repo}"
+
+        # Check if the repository exists
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            context["error_message"] = "Repository not found. Please make sure it is public and the URL is correct."
+            return template_response(context=context)
+
+        repo_data = response.json()
+        context["repo_data"] = repo_data
+
+    except Exception as e:
+        context["error_message"] = f"Error processing repository URL: {str(e)}"
+        return template_response(context=context)
+
+    max_file_size = log_slider_to_size(slider_position)
 
     try:
         # Set a timeout value (in seconds) to prevent long-running operations
@@ -142,7 +167,6 @@ async def process_query(
             "content": content,
             "project_description": get_project_description(tree, content),
             "installation_usage": get_installation_usage(url),
-            "general_overview_diagram": get_general_overview_diagram(url, tree),
             "project_metrics": get_project_metrics(repo_data),
             "beginner_issues": repository_issues["beginner_issues"],
             "intermediate_issues": repository_issues["intermediate_issues"],

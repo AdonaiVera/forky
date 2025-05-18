@@ -17,6 +17,23 @@
             element.classList.toggle('hover:text-gray-500');
         });
     }
+
+    // Add keyboard event listener for Enter key
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('input_text');
+        if (input) {
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && document.activeElement === input) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const form = document.getElementById('ingestForm');
+                    if (form) {
+                        handleSubmit(new Event('submit'), true);
+                    }
+                }
+            });
+        }
+    });
 </script>
 <div class="relative">
     <div class="w-full h-full absolute inset-0 bg-[#4ECDC4] rounded-xl translate-y-2 translate-x-2 opacity-80"></div>

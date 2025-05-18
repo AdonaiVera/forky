@@ -1,0 +1,131 @@
+<script>
+    // Add keyboard event listener for Enter key
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('repo_search_query');
+        if (input) {
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && document.activeElement === input) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    searchRepositories(event);
+                }
+            });
+        }
+    });
+
+    function searchRepositories(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const searchQuery = document.getElementById('repo_search_query').value.trim();
+        if (!searchQuery) return;
+
+        // Show loading state
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = '<div class="text-center py-4"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div><p class="mt-2 text-gray-700">Searching repositories...</p></div>';
+
+        // Send search request to backend
+        fetch('/search_repos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'query': searchQuery
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                resultsContainer.innerHTML = `<div class="text-center py-4 text-red-500">${data.error}</div>`;
+                return;
+            }
+
+            // Display results
+            if (data.repos && data.repos.length > 0) {
+                let html = '<div class="grid gap-4">';
+                data.repos.forEach(repo => {
+                    html += `
+                        <div class="bg-forky-cream rounded-lg border-2 border-gray-900 p-4 hover:bg-[#4ECDC4]/10 transition-all duration-200 relative">
+                            <div class="w-full h-full absolute inset-0 bg-[#4ECDC4] rounded-lg translate-y-1 translate-x-1 opacity-80 -z-10"></div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">${repo.full_name}</h3>
+                                    <p class="text-gray-600 mt-1">${repo.description || 'No description available'}</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500">⭐ ${repo.stars}</span>
+                                    <span class="text-sm text-gray-500">🍴 ${repo.forks}</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                ${repo.topics.map(topic => `
+                                    <span class="px-2 py-1 bg-[#4ECDC4]/10 text-gray-700 rounded-full text-sm">${topic}</span>
+                                `).join('')}
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="useRepository('${repo.html_url}')" class="flex-1 py-2 bg-[#4ECDC4] hover:bg-[#4ECDC4]/90 text-gray-900 rounded-lg border-2 border-gray-900 transition-all duration-200 text-sm font-bold">
+                                    Use This Repository
+                                </button>
+                                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 bg-forky-red hover:bg-forky-red/90 text-white rounded-lg border-2 border-gray-900 transition-all duration-200 text-sm font-bold text-center">
+                                    Open in GitHub
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                resultsContainer.innerHTML = html;
+            } else {
+                resultsContainer.innerHTML = '<div class="text-center py-4 text-gray-500">No repositories found</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultsContainer.innerHTML = '<div class="text-center py-4 text-red-500">Error searching repositories</div>';
+        });
+    }
+
+    function useRepository(repoUrl) {
+        const input = document.getElementById('input_text');
+        if (input) {
+            input.value = repoUrl;
+            input.focus();
+            // Scroll to the git form
+            const gitForm = document.getElementById('ingestForm');
+            if (gitForm) {
+                gitForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }
+</script>
+<div class="mb-12">
+    <div class="relative">
+        <div class="w-full h-full absolute inset-0 bg-forky-red rounded-xl translate-y-2 translate-x-2 opacity-80"></div>
+        <div class="rounded-xl relative z-20 pl-8 sm:pl-10 pr-8 sm:pr-16 py-8 border-[3px] border-gray-900 bg-[#FFF6E9]">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Find Open Source Projects</h2>
+            <form class="flex md:flex-row flex-col w-full h-full justify-center items-stretch space-y-5 md:space-y-0 md:space-x-5"
+                  id="repoSearchForm"
+                  onsubmit="searchRepositories(event)">
+                <div class="relative w-full h-full">
+                    <div class="w-full h-full rounded bg-forky-red translate-y-1 translate-x-1 absolute inset-0 z-10 opacity-70"></div>
+                    <input type="text"
+                           name="repo_search_query"
+                           id="repo_search_query"
+                           placeholder="What kind of project are you looking for?"
+                           required
+                           class="border-[3px] w-full relative z-20 border-gray-900 placeholder-gray-900/60 text-lg font-medium focus:outline-none py-3.5 px-6 rounded bg-[#FFF6E9]">
+                </div>
+                <div class="relative w-auto flex-shrink-0 h-full group">
+                    <div class="w-full h-full rounded bg-forky-red translate-y-1 translate-x-1 absolute inset-0 z-10 opacity-70"></div>
+                    <button type="submit"
+                            class="py-3.5 rounded px-6 group-hover:-translate-y-px group-hover:-translate-x-px ease-out duration-300 z-20 relative w-full border-[3px] border-gray-900 font-bold bg-forky-red tracking-wide text-lg flex-shrink-0 text-white hover:bg-forky-red/90 transition-all">
+                        Search Repositories
+                    </button>
+                </div>
+            </form>
+            <!-- Results container -->
+            <div id="search-results" class="mt-8"></div>
+        </div>
+    </div>
+</div>

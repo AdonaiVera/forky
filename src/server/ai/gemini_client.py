@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai.types import GenerateContentConfig, GoogleSearch, Tool
 from pydantic import BaseModel
 
 # Load environment variables from .env file
@@ -19,6 +20,12 @@ class SelectIssuesResponse(BaseModel):
     beginner_issues: list[int]
     intermediate_issues: list[int]
     advanced_issues: list[int]
+
+class RepositorySearchResponse(BaseModel):
+    repo_full_name: str
+    description: str
+    language: str
+    match_reason: str
 
 class GeminiClient:
     def __init__(self):
@@ -327,3 +334,193 @@ class GeminiClient:
         except Exception as e:
             print(f"Error in chat: {e}")
             return "Oops! Something went wrong on my end. Let's try that again! 😅"
+
+    async def search_repositories_with_reasoning(self, query: str, temperature: float = 0.7) -> list:
+        """
+        Search for repositories using Gemini's knowledge with Google Search grounding.
+
+        Parameters
+        ----------
+        query : str
+            The search query from the user
+        temperature : float, optional
+            Controls the randomness of the model's responses. Higher values (e.g., 0.8) make the output more creative,
+            while lower values (e.g., 0.2) make it more focused and deterministic. Default is 0.7.
+
+        Returns
+        -------
+        list
+            List of recommended repositories with reasons why they match
+        """
+        from google.genai.types import (GenerateContentConfig, GoogleSearch,
+                                        Tool)
+
+        # Configure Google Search as a tool
+        google_search_tool = Tool(
+            google_search=GoogleSearch()
+        )
+
+        prompt = f"""
+        Find the best GitHub repositories that match this search query: "{query}"
+
+        For each repository, provide:
+        1. The Repository name in the format "owner/repo"
+        2. A brief description of what the repository is about
+        3. The main programming language used
+        4. A specific explanation of why this repository is a good match for the query
+
+        Return your response as a JSON array with these fields for each repository:
+        - "repo_full_name": The full name of the repository (e.g., "owner/repo")
+        - "description": Brief description of the repository
+        - "language": Main programming language
+        - "match_reason": Specific reason why this repository matches the query
+
+        Limit the response to the top 5 most relevant repositories.
+        Make sure to include only real, existing GitHub repositories, the repo should be active and maintained, should have more than 5 files.
+
+        Your response should be ONLY the JSON array, with no additional text or explanation.
+        """
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config=GenerateContentConfig(
+                    tools=[google_search_tool],
+                    response_modalities=["TEXT"],
+                    temperature=temperature,
+                ),
+            )
+
+            if not response or not response.candidates:
+                print("No response from Gemini")
+                return []
+
+            try:
+                # Extract JSON from the response text
+                response_text = response.text.strip()
+                json_start = response_text.find("[")
+                json_end = response_text.rfind("]") + 1
+
+                if json_start == -1 or json_end == 0:
+                    print("No JSON array found in response")
+                    print(f"Raw response: {response_text}")
+                    return []
+
+                json_str = response_text[json_start:json_end]
+                repositories = json.loads(json_str)
+
+                if not isinstance(repositories, list):
+                    print(f"Unexpected response format: {json_str}")
+                    return []
+
+                return repositories
+
+            except json.JSONDecodeError as e:
+                print(f"Error parsing JSON response: {e}")
+                print(f"Raw response: {response_text}")
+                return []
+
+        except Exception as e:
+            print(f"Error searching repositories with reasoning: {e}")
+            return []
+
+    async def rank_repositories_by_readme(self, query: str, repositories: list) -> list:
+        """
+        Analyze READMEs of repositories and rank them based on relevance to the query.
+
+        Parameters
+        ----------
+        query : str
+            The original search query
+        repositories : list
+            List of repository objects with their metadata
+
+        Returns
+        -------
+        list
+            Top 3 repositories ranked by relevance to the query
+        """
+        prompt = f"""
+        Given this search query: "{query}"
+
+        And these repositories with their READMEs:
+        {json.dumps(repositories, indent=2)}
+
+        Analyze each repository's README and rank them based on how well they match the query.
+        Consider:
+        1. How well the repository's purpose aligns with the query
+        2. The quality and completeness of the documentation
+        3. The relevance of the features and functionality described
+
+        Return your response as a JSON array with these fields for each repository:
+        - "repo_full_name": The full name of the repository
+        - "relevance_score": A number between 0 and 1 indicating how relevant the repo is to the query
+        - "match_explanation": A brief explanation of why this repository is a good match
+
+        Sort the repositories by relevance_score in descending order and return only the top 3.
+        Your response should be ONLY the JSON array, with no additional text or explanation.
+        """
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                },
+            )
+
+            if not response or not response.candidates:
+                print("No response from Gemini for README analysis")
+                return repositories[:3]  # Return first 3 if analysis fails
+
+            try:
+                # Extract JSON from the response text
+                response_text = response.text.strip()
+                json_start = response_text.find("[")
+                json_end = response_text.rfind("]") + 1
+
+                if json_start == -1 or json_end == 0:
+                    print("No JSON array found in README analysis response")
+                    return repositories[:3]
+
+                json_str = response_text[json_start:json_end]
+                ranked_repos = json.loads(json_str)
+
+                if not isinstance(ranked_repos, list):
+                    print(f"Unexpected README analysis response format: {json_str}")
+                    return repositories[:3]
+
+                # Create a mapping of repo names to their rankings
+                repo_rankings = {
+                    repo["repo_full_name"]: {
+                        "relevance_score": repo["relevance_score"],
+                        "match_explanation": repo["match_explanation"]
+                    }
+                    for repo in ranked_repos
+                }
+
+                # Sort original repositories based on rankings
+                sorted_repos = sorted(
+                    repositories,
+                    key=lambda x: repo_rankings.get(x["full_name"], {}).get("relevance_score", 0),
+                    reverse=True
+                )
+
+                # Add ranking information to the top 3 repositories
+                for repo in sorted_repos[:3]:
+                    ranking = repo_rankings.get(repo["full_name"], {})
+                    repo["relevance_score"] = ranking.get("relevance_score", 0)
+                    repo["match_explanation"] = ranking.get("match_explanation", "")
+
+                return sorted_repos[:3]
+
+            except json.JSONDecodeError as e:
+                print(f"Error parsing README analysis JSON response: {e}")
+                print(f"Raw response: {response_text}")
+                return repositories[:3]
+
+        except Exception as e:
+            print(f"Error analyzing READMEs: {e}")
+            return repositories[:3]

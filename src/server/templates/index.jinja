@@ -34,6 +34,8 @@
              id="error-message"
              data-message="{{ error_message }}">{{ error_message }}</div>
     {% endif %}
+    <!-- Add the repo search component above the git form -->
+    {% include 'components/repo_search.jinja' %}
     {% with is_index=true, show_examples=true %}
         {% include 'components/git_form.jinja' %}
     {% endwith %}
